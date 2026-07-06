@@ -47,12 +47,13 @@
     <div class="profile-content">
         <div class="left-column">
             <div class="profile-section">
-                <h2>Subjects</h2>
-                <div class="subjects-list">
-                    @foreach($tutor->tutorProfile->subjects as $subject)
-                        <span class="subject-tag">{{ $subject->name }}</span>
-                    @endforeach
-                </div>
+<h2>{{ app()->getLocale() == 'ar' ? 'المواد' : 'Subjects' }}</h2>                <div class="subjects-list">
+  @foreach($tutor->tutorProfile->subjects as $subject)
+    <span class="subject-tag">
+        {{ app()->getLocale() == 'ar' ? __('messages.' . strtolower($subject->name)) : $subject->name }}
+    </span>
+@endforeach
+              </div>
             </div>
 
             <div class="profile-section">
@@ -91,11 +92,12 @@
                             @csrf
                             <input type="hidden" name="tutor_id" value="{{ $tutor->id }}">
                             <div class="form-group">
-                                <label>Subject</label>
-                                <select name="subject_id" class="form-control" required>
-                                    @foreach($tutor->tutorProfile->subjects as $subject)
-                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                    @endforeach
+<label>{{ app()->getLocale() == 'ar' ? 'المادة' : 'Subject' }}</label>                                <select name="subject_id" class="form-control" required>
+@foreach($tutor->tutorProfile->subjects as $subject)
+    <option value="{{ $subject->id }}">
+        {{ app()->getLocale() == 'ar' ? __('messages.' . strtolower($subject->name)) : $subject->name }}
+    </option>
+@endforeach
                                 </select>
                             </div>
                             <div class="form-group">
@@ -153,7 +155,11 @@
                     <a href="{{ route('tutors.show', $similar->id) }}" class="similar-card" style="text-decoration: none; color: inherit;">
                         <div class="similar-avatar">{{ strtoupper(substr($similar->name, 0, 1)) }}</div>
                         <h4 style="font-size: 14px; font-weight: 600;">{{ $similar->name }}</h4>
-                        <p style="font-size: 12px; color: var(--text-light);">{{ $similar->tutorProfile->subjects->first()->name ?? '' }}</p>
+<p style="font-size: 12px; color: var(--text-light);">
+    @if($similar->tutorProfile->subjects->first())
+        {{ app()->getLocale() == 'ar' ? __('messages.' . strtolower($similar->tutorProfile->subjects->first()->name)) : $similar->tutorProfile->subjects->first()->name }}
+    @endif
+</p>
                     </a>
                 @endforeach
             </div>

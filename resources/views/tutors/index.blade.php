@@ -27,13 +27,15 @@
                     <label style="display: block; font-size: 14px; font-weight: 700; color: #14532D; margin-bottom: 8px;">
                         {{ app()->getLocale() == 'ar' ? 'المادة' : 'Subject' }}
                     </label>
-                    <select name="subject" style="width: 100%; padding: 14px 16px; border: 2px solid #E5E7EB; border-radius: 12px; font-size: 15px; color: #14532D; background: white; font-weight: 500;">
-                        <option value="">{{ app()->getLocale() == 'ar' ? 'جميع المواد' : 'All Subjects' }}</option>
-                        @foreach($subjects ?? [] as $subject)
-                            <option value="{{ $subject->name }}" {{ request('subject') == $subject->name ? 'selected' : '' }}>{{ $subject->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+<select name="subject" style="width: 100%; padding: 14px 16px; border: 2px solid #E5E7EB; border-radius: 12px; font-size: 15px; color: #14532D; background: white; font-weight: 500;">
+    <option value="">{{ app()->getLocale() == 'ar' ? 'جميع المواد' : 'All Subjects' }}</option>
+    @foreach($subjects ?? [] as $subject)
+        <option value="{{ $subject->name }}" {{ request('subject') == $subject->name ? 'selected' : '' }}>
+            {{ app()->getLocale() == 'ar' ? __('messages.' . strtolower($subject->name)) : $subject->name }}
+        </option>
+    @endforeach
+</select>
+               </div>
 
                 <!-- Class Type -->
                 <div>
@@ -95,8 +97,15 @@
                         </div>
                         <div style="padding: 40px 24px 24px; text-align: center;">
                             <h3 style="font-weight: 700; color: #14532D; font-size: 18px; margin: 0;">{{ $tutor->user->name ?? 'Tutor' }}</h3>
-                            <p style="color: #166534; font-weight: 600; font-size: 14px; margin-top: 4px;">{{ $tutor->subjects ?? 'General' }}</p>
-
+<p style="color: #166534; font-weight: 600; font-size: 14px; margin-top: 4px;">
+    @if($tutor->subjects && $tutor->subjects->count() > 0)
+        @foreach($tutor->subjects as $subject)
+            {{ app()->getLocale() == 'ar' ? __('messages.' . strtolower($subject->name)) : $subject->name }}{{ !$loop->last ? ', ' : '' }}
+        @endforeach
+    @else
+        {{ app()->getLocale() == 'ar' ? 'عام' : 'General' }}
+    @endif
+</p>
                             @if($tutor->rating)
                                 <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 8px;">
                                     <span style="color: #F59E0B; font-size: 18px;">★★★★★</span>
