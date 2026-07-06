@@ -9,7 +9,6 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CoinController;
-use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Admin\TutorController as AdminTutorController;
@@ -30,7 +29,6 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/ref/{code}', [ReferralController::class, 'track'])->name('referral.track');
 
 /*
 |--------------------------------------------------------------------------

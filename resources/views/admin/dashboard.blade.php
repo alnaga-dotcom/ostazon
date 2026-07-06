@@ -50,7 +50,7 @@
             <h3>Payment Verifications <span class="badge-count">{{ $pendingPayments ?? 0 }}</span></h3>
             <p>Verify coin purchases and process payments</p>
         </a>
-        <a href="{{ route('admin.tutors') }}" class="action-card">
+        <a href="{{ route('admin.tutors.index') }}" class="action-card">
             <div class="icon">🎓</div>
             <h3>Tutor Verifications <span class="badge-count">{{ $pendingVerifications ?? 0 }}</span></h3>
             <p>Review and approve tutor applications</p>

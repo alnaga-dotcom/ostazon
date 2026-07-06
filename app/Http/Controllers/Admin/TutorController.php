@@ -15,12 +15,17 @@ class TutorController extends Controller
      */
     public function index()
     {
-        $tutors = TutorProfile::with('user')
-            ->orderBy('verification_status')
+        $pendingTutors = TutorProfile::with('user')
+            ->where('verification_status', 'pending')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('admin.tutors', compact('tutors'));
+        $allTutors = TutorProfile::with('user')
+            ->whereIn('verification_status', ['verified', 'certified'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return view('admin.tutors', compact('pendingTutors', 'allTutors'));
     }
 
     /**

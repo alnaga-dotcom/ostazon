@@ -103,12 +103,48 @@
                     </div>
                 </div>
 
+                <!-- Badge Display -->
+                <div style="margin-bottom: 16px; padding: 12px; background: #f9fafb; border-radius: 10px;">
+                    @php
+                        $badgeInfo = \App\Services\BadgeService::getBadgeInfo($tutor->badge_level);
+                    @endphp
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                        <span style="padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 700; background: {{ $badgeInfo['bg'] }}; color: {{ $badgeInfo['color'] }}; border: 2px solid {{ $badgeInfo['color'] }};">
+                            {{ app()->getLocale() == 'ar' ? $badgeInfo['label_ar'] : $badgeInfo['label'] }}
+                        </span>
+                        @if($tutor->badge_level)
+                            <span style="font-size: 12px; color: #6b7280;">
+                                {{ app()->getLocale() == 'ar' ? 'منذ' : 'Since' }} {{ $tutor->badge_awarded_at?->diffForHumans() ?? 'N/A' }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Badge Override (Admin Manual Control) -->
+                <div style="margin-bottom: 16px; padding: 12px; background: #eff6ff; border-radius: 10px; border: 1px solid #bfdbfe;">
+                    <h4 style="font-size: 13px; font-weight: 700; color: #1e40af; margin-bottom: 8px;">
+                        {{ app()->getLocale() == 'ar' ? 'تغيير الشارة يدوياً' : 'Manual Badge Override' }}
+                    </h4>
+                    <form method="POST" action="{{ route('admin.tutors.badge', $tutor->id) }}" style="display: flex; gap: 8px; align-items: center;">
+                        @csrf
+                        <select name="badge" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 13px;">
+                            <option value="verified">Verified / موثق</option>
+                            <option value="certified">Certified / معتمد</option>
+                            <option value="top">Top Rated / الأعلى تقييماً</option>
+                            <option value="elite">Elite / نخبة</option>
+                        </select>
+                        <button type="submit" style="padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            {{ app()->getLocale() == 'ar' ? 'تحديث' : 'Update' }}
+                        </button>
+                    </form>
+                </div>
+
                 <div class="verification-actions">
                     <form method="POST" action="{{ route('admin.tutors.verify', $tutor->id) }}" style="display: flex; gap: 12px; align-items: center;">
                         @csrf
                         <select class="level-select" name="level">
-                            <option value="verified">Verified</option>
-                            <option value="certified">Certified</option>
+                            <option value="verified">{{ app()->getLocale() == 'ar' ? 'موثق' : 'Verified' }}</option>
+                            <option value="certified">{{ app()->getLocale() == 'ar' ? 'معتمد' : 'Certified' }}</option>
                         </select>
                         <button type="submit" class="btn btn-primary">✅ Approve</button>
                     </form>
