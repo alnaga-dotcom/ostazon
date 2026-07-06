@@ -9,22 +9,24 @@ class TutorProfile extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'bio',
-        'hourly_rate',
-        'lesson_mode',
-        'country',
-        'city',
-        'video_intro_url',
-        'id_document_url',
-        'certificate_url',
-        'verification_status',
-        'total_lessons',
-        'total_earnings',
-        'available_balance',
-    ];
-
+protected $fillable = [
+    'user_id',
+    'badge_level',
+    'badge_awarded_at',
+    'total_lessons',
+    'average_rating',
+    'bio',
+    'hourly_rate',
+    'lesson_mode',
+    'country',
+    'city',
+    'video_intro_url',
+    'id_document_url',
+    'certificate_url',
+    'verification_status',
+    'total_earnings',
+    'available_balance',
+];
     protected $casts = [
         'hourly_rate' => 'decimal:2',
         'total_earnings' => 'decimal:2',

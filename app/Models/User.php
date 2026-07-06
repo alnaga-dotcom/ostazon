@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -98,16 +99,66 @@ class User extends Authenticatable
         return $this->hasMany(TutorProposal::class, 'tutor_id');
     }
 
-    // Coin transactions
+    // Coin Wallet
+    public function coinWallet(): HasOne
+    {
+        return $this->hasOne(CoinWallet::class);
+    }
+
     public function coinTransactions()
     {
         return $this->hasMany(CoinTransaction::class);
     }
 
-    // Coin purchases
-    public function coinPurchases()
+    public function getCoinBalanceAttribute(): int
     {
-        return $this->hasMany(CoinPurchase::class);
+        return $this->coinWallet?->balance ?? 0;
+    }
+
+    public function addCoins(int $amount, string $type, string $description = null, int $relatedId = null, string $relatedType = null): void
+    {
+        $wallet = $this->coinWallet;
+
+        if (!$wallet) {
+            $wallet = $this->coinWallet()->create(['balance' => 0]);
+        }
+
+        $wallet->balance += $amount;
+        $wallet->save();
+
+        $this->coinTransactions()->create([
+            'amount' => $amount,
+            'type' => $type,
+            'description' => $description,
+            'related_id' => $relatedId,
+            'related_type' => $relatedType,
+        ]);
+    }
+
+    public function deductCoins(int $amount, string $type, string $description = null, int $relatedId = null, string $relatedType = null): bool
+    {
+        if ($this->coin_balance < $amount) {
+            return false;
+        }
+
+        $wallet = $this->coinWallet;
+        $wallet->balance -= $amount;
+        $wallet->save();
+
+        $this->coinTransactions()->create([
+            'amount' => -$amount,
+            'type' => $type,
+            'description' => $description,
+            'related_id' => $relatedId,
+            'related_type' => $relatedType,
+        ]);
+
+        return true;
+    }
+
+    public function hasEnoughCoins(int $amount): bool
+    {
+        return $this->coin_balance >= $amount;
     }
 
     // Referrals
@@ -119,11 +170,5 @@ class User extends Authenticatable
     public function referrer()
     {
         return $this->belongsTo(User::class, 'referred_by');
-    }
-
-    // Withdrawals
-    public function withdrawalRequests()
-    {
-        return $this->hasMany(TutorWithdrawal::class, 'tutor_id');
     }
 }

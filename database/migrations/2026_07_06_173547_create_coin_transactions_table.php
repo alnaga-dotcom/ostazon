@@ -10,13 +10,12 @@ return new class extends Migration
     {
         Schema::create('coin_transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('type', ['purchase', 'spend', 'refund', 'bonus', 'referral']);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('amount');
-            $table->integer('balance_after');
-            $table->string('description')->nullable();
-            $table->string('reference_type')->nullable();
-            $table->integer('reference_id')->nullable();
+            $table->string('type');
+            $table->text('description')->nullable();
+            $table->foreignId('related_id')->nullable();
+            $table->string('related_type')->nullable();
             $table->timestamps();
         });
     }

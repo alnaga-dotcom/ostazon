@@ -12,6 +12,7 @@ use App\Http\Controllers\CoinController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Admin\TutorController as AdminTutorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +51,7 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     // Proposals
     Route::post('/proposals/{proposal}/accept', [RequestController::class, 'acceptProposal'])->name('proposals.accept');
 
-    // Bookings - FIXED: Added missing store route for direct bookings
+    // Bookings
     Route::get('/bookings', [LessonController::class, 'studentBookings'])->name('bookings');
     Route::post('/bookings', [LessonController::class, 'store'])->name('bookings.store');
     Route::post('/bookings/{id}/cancel', [LessonController::class, 'cancel'])->name('bookings.cancel');
@@ -99,7 +100,14 @@ Route::middleware(['auth'])->prefix('tutor')->name('tutor.')->group(function () 
     Route::get('/earnings', [TutorController::class, 'earnings'])->name('earnings');
     Route::get('/withdrawals', [TutorController::class, 'withdrawals'])->name('withdrawals');
     Route::post('/withdrawals', [TutorController::class, 'storeWithdrawal'])->name('withdrawals.store');
-// Language switcher
+});
+
+/*
+|--------------------------------------------------------------------------
+| Language Switcher
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/locale/{locale}', function ($locale) {
     if (in_array($locale, ['ar', 'en'])) {
         session(['locale' => $locale]);
@@ -108,18 +116,16 @@ Route::get('/locale/{locale}', function ($locale) {
     return redirect()->back();
 })->name('locale.switch');
 
-// Arbitration routes
+/*
+|--------------------------------------------------------------------------
+| Arbitration Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth'])->group(function () {
     Route::post('/bookings/{booking}/dispute', [BookingController::class, 'fileDispute'])->name('bookings.dispute');
     Route::get('/bookings/{booking}/arbitration', [BookingController::class, 'arbitrationStatus'])->name('bookings.arbitration');
 });
-
-// Admin arbitration
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/arbitrations', [AdminController::class, 'arbitrations'])->name('admin.arbitrations');
-    Route::post('/admin/arbitrations/{booking}/resolve', [AdminController::class, 'resolveArbitration'])->name('admin.arbitrations.resolve');
-});
-    });
 
 /*
 |--------------------------------------------------------------------------
@@ -128,17 +134,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
 */
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // Tutors (using new AdminTutorController for badges)
+    Route::get('/tutors', [AdminTutorController::class, 'index'])->name('tutors.index');
+    Route::post('/tutors/{tutor}/verify', [AdminTutorController::class, 'verify'])->name('tutors.verify');
+    Route::post('/tutors/{tutor}/reject', [AdminTutorController::class, 'reject'])->name('tutors.reject');
+    Route::post('/tutors/{tutor}/badge', [AdminTutorController::class, 'updateBadge'])->name('tutors.badge');
 
     // Payments
     Route::get('/payments', [AdminController::class, 'payments'])->name('payments');
     Route::post('/payments/{id}/verify', [AdminController::class, 'verifyPayment'])->name('payments.verify');
     Route::post('/payments/{id}/reject', [AdminController::class, 'rejectPayment'])->name('payments.reject');
-
-    // Tutors
-    Route::get('/tutors', [AdminController::class, 'tutors'])->name('tutors');
-    Route::post('/tutors/{id}/verify', [AdminController::class, 'verifyTutor'])->name('tutors.verify');
-    Route::post('/tutors/{id}/reject', [AdminController::class, 'rejectTutor'])->name('tutors.reject');
 
     // Withdrawals
     Route::get('/withdrawals', [AdminController::class, 'withdrawals'])->name('withdrawals');
@@ -147,6 +155,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Disputes
     Route::get('/disputes', [AdminController::class, 'disputes'])->name('disputes');
     Route::post('/disputes/{id}/resolve', [AdminController::class, 'resolveDispute'])->name('disputes.resolve');
+
+    // Arbitrations
+    Route::get('/arbitrations', [AdminController::class, 'arbitrations'])->name('arbitrations');
+    Route::post('/arbitrations/{booking}/resolve', [AdminController::class, 'resolveArbitration'])->name('arbitrations.resolve');
 
     // Analytics
     Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
