@@ -30,9 +30,6 @@
     .verified-tutor-card { background: white; border-radius: 16px; padding: 20px 24px; box-shadow: var(--shadow); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
     .verified-tutor-info h4 { font-size: 15px; font-weight: 600; }
     .verified-tutor-info p { font-size: 13px; color: var(--text-light); }
-    .badge-verified { background: var(--primary-light); color: var(--primary); padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
-    .badge-certified { background: var(--secondary-light); color: var(--secondary); padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
-    .badge-top { background: linear-gradient(135deg, var(--secondary), #e6951a); color: white; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
     .empty-state { text-align: center; padding: 60px; color: var(--text-light); }
 </style>
 
@@ -109,7 +106,7 @@
                         $badgeInfo = \App\Services\BadgeService::getBadgeInfo($tutor->badge_level);
                     @endphp
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                        <span style="padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 700; background: {{ $badgeInfo['bg'] }}; color: {{ $badgeInfo['color'] }}; border: 2px solid {{ $badgeInfo['color'] }};">
+                        <span style="padding: 8px 20px; border-radius: 50px; font-size: 15px; font-weight: 700; background: {{ $badgeInfo['bg'] }}; color: {{ $badgeInfo['color'] }}; border: 2px solid {{ $badgeInfo['color'] }};">
                             {{ app()->getLocale() == 'ar' ? $badgeInfo['label_ar'] : $badgeInfo['label'] }}
                         </span>
                         @if($tutor->badge_level)
@@ -139,18 +136,19 @@
                     </form>
                 </div>
 
-                <div class="verification-actions">
+                <!-- Verification Actions -->
+                <div class="verification-actions" style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 16px; border-top: 1px solid var(--bg);">
+                    <form method="POST" action="{{ route('admin.tutors.reject', $tutor->id) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-outline" style="border-color: #dc2626; color: #dc2626;">❌ {{ app()->getLocale() == 'ar' ? 'رفض' : 'Reject' }}</button>
+                    </form>
                     <form method="POST" action="{{ route('admin.tutors.verify', $tutor->id) }}" style="display: flex; gap: 12px; align-items: center;">
                         @csrf
-                        <select class="level-select" name="level">
+                        <select class="level-select" name="level" style="padding: 10px 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 14px;">
                             <option value="verified">{{ app()->getLocale() == 'ar' ? 'موثق' : 'Verified' }}</option>
                             <option value="certified">{{ app()->getLocale() == 'ar' ? 'معتمد' : 'Certified' }}</option>
                         </select>
-                        <button type="submit" class="btn btn-primary">✅ Approve</button>
-                    </form>
-                    <form method="POST" action="{{ route('admin.tutors.reject', $tutor->id) }}">
-                        @csrf
-                        <button type="submit" class="btn btn-outline" style="border-color: var(--accent); color: var(--accent);">❌ Reject</button>
+                        <button type="submit" class="btn btn-primary" style="background: #166534; color: white;">✅ {{ app()->getLocale() == 'ar' ? 'موافقة' : 'Approve' }}</button>
                     </form>
                 </div>
             </div>
@@ -174,7 +172,7 @@
                     <h4>{{ $tutor->user->name }}</h4>
                     <p>{{ $tutor->user->email }} • {{ $tutor->subjects->count() }} subjects • {{ $tutor->total_lessons }} lessons</p>
                 </div>
-                <span class="badge-{{ $tutor->verification_status }}">
+                <span style="padding: 8px 20px; border-radius: 50px; font-size: 15px; font-weight: 700; background: #dcfce7; color: #166534; border: 2px solid #166534;">
                     {{ ucfirst($tutor->verification_status) }}
                 </span>
             </div>
@@ -189,9 +187,14 @@
 <script>
     function showTab(tab) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
         document.getElementById('pending-tab').style.display = tab === 'pending' ? 'block' : 'none';
         document.getElementById('verified-tab').style.display = tab === 'verified' ? 'block' : 'none';
+
+        if (tab === 'pending') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+        }
     }
 </script>
 @endsection
