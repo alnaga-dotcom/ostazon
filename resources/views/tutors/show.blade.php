@@ -4,8 +4,7 @@
 
 @section('content')
 <style>
-    .profile-header { background: linear-gradient(135deg, var(--primary), #7c3aed); color: white; padding: 60px 0; }
-    .profile-header .container { display: flex; align-items: center; gap: 32px; }
+.profile-header { background: linear-gradient(135deg, #166534, #15803d); color: white; padding: 60px 0; }    .profile-header .container { display: flex; align-items: center; gap: 32px; }
     .profile-avatar { width: 120px; height: 120px; border-radius: 50%; background: white; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 700; flex-shrink: 0; }
     .profile-info h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
     .profile-info p { font-size: 16px; opacity: 0.9; margin-bottom: 12px; }
@@ -31,9 +30,9 @@
 <div class="profile-header">
     <div class="container">
         <div class="profile-avatar">{{ strtoupper(substr($tutor->name, 0, 1)) }}</div>
-        <div class="profile-info">
-            <h1>{{ $tutor->name }}</h1>
-            <p>{{ $tutor->tutorProfile->bio ?? 'No bio available.' }}</p>
+<div class="profile-info" style="color: white;">
+    <h1 style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 32px; font-weight: 800; margin-bottom: 8px;">{{ $tutor->name }}</h1>
+                <p>{{ $tutor->tutorProfile->bio ?? 'No bio available.' }}</p>
             <div class="profile-meta">
                 <span>⭐ {{ number_format($tutor->reviews_as_tutor_avg_rating ?? 0, 1) }} ({{ $tutor->reviews_as_tutor_count ?? 0 }} reviews)</span>
                 <span>{{ $tutor->tutorProfile->total_lessons ?? 0 }} lessons</span>
@@ -62,22 +61,81 @@
             </div>
 
             <div class="reviews-section">
-                <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 20px;">Reviews</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="font-size: 24px; font-weight: 800; margin: 0;">
+                        {{ app()->getLocale() == 'ar' ? 'التقييمات' : 'Reviews' }}
+                    </h2>
+                    @if($tutor->tutorProfile->average_rating > 0)
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 28px; font-weight: 800; color: #f59e0b;">{{ number_format($tutor->tutorProfile->average_rating, 1) }}</span>
+                            <span style="color: #f59e0b; font-size: 20px;">★★★★★</span>
+                            <span style="color: #6b7280; font-size: 14px;">({{ $reviews->count() }})</span>
+                        </div>
+                    @endif
+                </div>
+
                 @if($reviews->count() > 0)
                     @foreach($reviews as $review)
-                        <div class="review-card">
-                            <div class="review-header">
-                                <strong>{{ $review->student->name ?? 'Anonymous' }}</strong>
-                                <span class="review-rating">⭐ {{ $review->rating }}/5</span>
+                        <div class="review-card" style="background: white; border-radius: 16px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px;">
+                            <div class="review-header" style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #166534; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">
+                                        {{ strtoupper(substr($review->student->name ?? 'A', 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <strong style="font-size: 15px;">{{ $review->student->name ?? 'Anonymous' }}</strong>
+                                        <div style="font-size: 12px; color: #6b7280;">{{ $review->created_at->diffForHumans() }}</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <span style="font-size: 18px; color: {{ $i <= $review->rating ? '#f59e0b' : '#d1d5db' }};">★</span>
+                                    @endfor
+                                </div>
                             </div>
-                            <p style="color: var(--text-light); font-size: 14px;">{{ $review->comment ?? 'No comment' }}</p>
+                            
+                            @if($review->comment)
+                                <p style="color: #374151; font-size: 14px; line-height: 1.6; margin-bottom: 12px;">{{ $review->comment }}</p>
+                            @endif
+
+                            <!-- Verified Booking Badge -->
+                            @if($review->is_verified_booking)
+                                <div style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #dcfce7; color: #166534; border-radius: 50px; font-size: 12px; font-weight: 600; margin-bottom: 12px;">
+                                    ✅ {{ app()->getLocale() == 'ar' ? 'حجز موثق' : 'Verified Booking' }}
+                                </div>
+                            @endif
+
+                            <!-- Tutor Reply -->
+                            @if($review->tutor_reply)
+                                <div style="margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 10px; border-right: 3px solid #166534;">
+                                    <div style="font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 4px;">
+                                        {{ app()->getLocale() == 'ar' ? 'رد المعلم' : 'Tutor Response' }}
+                                    </div>
+                                    <p style="color: #4b5563; font-size: 13px; margin: 0;">{{ $review->tutor_reply }}</p>
+                                </div>
+                            @endif
+
+                            <!-- Helpful Count -->
+                            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 12px; color: #6b7280;">
+                                    {{ $review->helpful_count }} {{ app()->getLocale() == 'ar' ? 'وجدو هذا مفيداً' : 'found this helpful' }}
+                                </span>
+                            </div>
                         </div>
                     @endforeach
                 @else
-                    <p style="color: var(--text-light);">No reviews yet.</p>
+                    <div style="text-align: center; padding: 40px; background: white; border-radius: 16px; box-shadow: var(--shadow);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">⭐</div>
+                        <h3 style="font-size: 16px; font-weight: 700; color: #14532d; margin-bottom: 8px;">
+                            {{ app()->getLocale() == 'ar' ? 'لا توجد تقييمات بعد' : 'No reviews yet' }}
+                        </h3>
+                        <p style="color: #6b7280; font-size: 14px;">
+                            {{ app()->getLocale() == 'ar' ? 'كن أول من يقيم هذا المعلم' : 'Be the first to review this tutor' }}
+                        </p>
+                    </div>
                 @endif
             </div>
-        </div>
+                </div>
 
         <div class="right-column">
             <div class="booking-form">

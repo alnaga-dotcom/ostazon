@@ -31,28 +31,29 @@ class TutorController extends Controller
     /**
      * Verify a tutor and assign initial badge
      */
-    public function verify(Request $request, TutorProfile $tutor)
+    public function verify(Request $request, $tutor)
     {
+        $tutorProfile = TutorProfile::findOrFail($tutor);
+
         $request->validate([
             'level' => 'required|in:verified,certified',
         ]);
 
-        $tutor->update([
+        $tutorProfile->update([
             'verification_status' => $request->level,
         ]);
 
         // Auto-assign badge based on verification level
-        BadgeService::updateBadge($tutor);
+        BadgeService::updateBadge($tutorProfile);
 
         return back()->with('success', 'Tutor verified as ' . $request->level);
     }
 
-    /**
-     * Reject a tutor verification
-     */
-    public function reject(TutorProfile $tutor)
+    public function reject($tutor)
     {
-        $tutor->update([
+        $tutorProfile = TutorProfile::findOrFail($tutor);
+
+        $tutorProfile->update([
             'verification_status' => 'rejected',
             'badge_level' => null,
         ]);
@@ -60,20 +61,19 @@ class TutorController extends Controller
         return back()->with('success', 'Tutor verification rejected');
     }
 
-    /**
-     * Manually update badge (for admin override)
-     */
-    public function updateBadge(Request $request, TutorProfile $tutor)
+    public function updateBadge(Request $request, $tutor)
     {
+        $tutorProfile = TutorProfile::findOrFail($tutor);
+
         $request->validate([
             'badge' => 'required|in:verified,certified,top,elite',
         ]);
 
-        $tutor->update([
+        $tutorProfile->update([
             'badge_level' => $request->badge,
             'badge_awarded_at' => now(),
         ]);
 
         return back()->with('success', 'Badge updated to ' . $request->badge);
     }
-}
+    }

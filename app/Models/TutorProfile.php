@@ -31,6 +31,7 @@ protected $fillable = [
         'hourly_rate' => 'decimal:2',
         'total_earnings' => 'decimal:2',
         'available_balance' => 'decimal:2',
+        'badge_awarded_at' => 'datetime',
     ];
 
     public function user()

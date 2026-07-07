@@ -3,6 +3,23 @@
 @section('title', 'Tutor Verifications - Admin - OstazON')
 
 @section('content')
+
+@if(session('success'))
+    <div style="max-width: 1400px; margin: 0 auto; padding: 20px 24px 0;">
+        <div style="padding: 16px 24px; background: #dcfce7; color: #166534; border-radius: 12px; font-weight: 600;">
+            ✅ {{ session('success') }}
+        </div>
+    </div>
+@endif
+
+@if(session('error'))
+    <div style="max-width: 1400px; margin: 0 auto; padding: 20px 24px 0;">
+        <div style="padding: 16px 24px; background: #fee2e2; color: #dc2626; border-radius: 12px; font-weight: 600;">
+            ❌ {{ session('error') }}
+        </div>
+    </div>
+@endif
+
 <style>
     .admin-container { max-width: 1400px; margin: 0 auto; padding: 40px 24px; }
     .admin-header { margin-bottom: 32px; }
@@ -111,7 +128,8 @@
                         </span>
                         @if($tutor->badge_level)
                             <span style="font-size: 12px; color: #6b7280;">
-                                {{ app()->getLocale() == 'ar' ? 'منذ' : 'Since' }} {{ $tutor->badge_awarded_at?->diffForHumans() ?? 'N/A' }}
+                                {{ app()->getLocale() == 'ar' ? 'منذ' : 'Since' }} 
+{{ $tutor->badge_awarded_at ? \Carbon\Carbon::parse($tutor->badge_awarded_at)->diffForHumans() : 'N/A' }}
                             </span>
                         @endif
                     </div>
