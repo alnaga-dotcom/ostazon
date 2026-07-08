@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CoinService;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\CoinTransaction;
@@ -82,7 +83,7 @@ class BookingController extends Controller
         }
 
         $booking->update([
-            'status' => 'completed',
+            'lesson_status' => 'completed',
             'completed_at' => now(),
             'frozen_until' => now()->addDays(7),
         ]);
@@ -115,21 +116,12 @@ class BookingController extends Controller
 
         // Check if user has enough coins for fee
         $user = Auth::user();
-        if ($user->coins < $fee) {
+        if (!CoinService::hasSufficient($user->id, (int) ceil($fee))) {
             return back()->with('error', 'Insufficient coins for arbitration fee. Required: ' . $fee . ' coins');
         }
 
         // Deduct arbitration fee from user coins
-        $user->decrement('coins', $fee);
-
-        // Record the fee transaction
-        CoinTransaction::create([
-            'user_id' => $user->id,
-            'amount' => -$fee,
-            'type' => 'arbitration_fee',
-            'description' => 'Arbitration fee for booking #' . $booking->id,
-            'booking_id' => $booking->id,
-        ]);
+        CoinService::debit($user->id, (int) ceil($fee), 'arbitration_fee', 'Arbitration fee for booking #' . $booking->id, 'booking', $booking->id);
 
         $booking->update([
             'arbitration_fee_paid' => true,

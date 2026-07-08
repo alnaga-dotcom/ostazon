@@ -77,4 +77,42 @@ class Booking extends Model
     {
         return $this->hasOne(Review::class);
     }
+
+    public function isFrozen(): bool
+    {
+        return $this->frozen_until && $this->frozen_until->isFuture();
+    }
+
+    public function canDispute(): bool
+    {
+        return $this->frozen_until
+            && $this->frozen_until->isFuture()
+            && ($this->arbitration_status === 'none' || is_null($this->arbitration_status));
+    }
+
+    public function isArbitrationFeePaid(): bool
+    {
+        return $this->arbitration_fee_paid;
+    }
+
+    public function getArbitrationFee(): float
+    {
+        return $this->lesson_fee * 0.20;
+    }
+
+    public function releaseFunds(): void
+    {
+        $this->update([
+            'frozen_until' => null,
+            'arbitration_status' => 'none',
+        ]);
+    }
+
+    public function freezeFunds(): void
+    {
+        $this->update([
+            'frozen_until' => now()->addDays(7),
+            'completed_at' => now(),
+        ]);
+    }
 }

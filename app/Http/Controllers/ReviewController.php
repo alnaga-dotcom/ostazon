@@ -45,7 +45,7 @@ class ReviewController extends Controller
         }
 
         // Check if lesson is completed
-        if ($booking->status !== 'completed') {
+        if ($booking->lesson_status !== 'completed') {
             return back()->with('error', 'You can only review completed lessons.');
         }
 

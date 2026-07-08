@@ -41,6 +41,7 @@ class DemoDataSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'tutor',
                 'email_verified_at' => now(),
+                'is_active' => true,
             ]
         );
 
@@ -51,6 +52,9 @@ class DemoDataSeeder extends Seeder
                 [
                     'bio' => 'Experienced math tutor with 10+ years teaching experience.',
                     'hourly_rate' => 30,
+                    'verification_status' => 'verified',
+                    'lesson_mode' => 'online',
+                    'country' => 'Egypt',
                 ]
             );
         } catch (\Exception $e) {
@@ -95,6 +99,7 @@ class DemoDataSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'role' => 'tutor',
                     'email_verified_at' => now(),
+                    'is_active' => true,
                 ]
             );
 
@@ -104,6 +109,9 @@ class DemoDataSeeder extends Seeder
                     [
                         'bio' => 'Professional tutor specializing in ' . $tutor['subject'] . '.',
                         'hourly_rate' => $tutor['price'],
+                        'verification_status' => 'verified',
+                        'lesson_mode' => 'online',
+                        'country' => 'Egypt',
                     ]
                 );
             } catch (\Exception $e) {

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Student Dashboard - OstazON')
+@section('title', __('messages.dashboard') . ' - OstazON')
 
 @section('content')
 <style>
@@ -28,49 +28,49 @@
 
 <div class="dashboard-container">
     <div class="dashboard-header">
-        <h1>Welcome back, {{ auth()->user()->name }}!</h1>
+        <h1>{{ app()->getLocale() == 'ar' ? 'مرحباً بعودتك، ' : 'Welcome back, ' }}{{ auth()->user()->name }}!</h1>
     </div>
 
     <div class="action-buttons">
-        <a href="{{ route('tutors.index') }}" class="btn btn-primary">Find a Tutor</a>
-        <a href="{{ route('student.requests.create') }}" class="btn btn-outline">Post a Request</a>
-        <a href="{{ route('student.coins.purchase') }}" class="btn btn-secondary">Buy Coins</a>
+        <a href="{{ route('tutors.index') }}" class="btn btn-primary">{{ app()->getLocale() == 'ar' ? 'ابحث عن معلم' : 'Find a Tutor' }}</a>
+        <a href="{{ route('student.requests.create') }}" class="btn btn-outline">{{ app()->getLocale() == 'ar' ? 'قدم طلباً' : 'Post a Request' }}</a>
+        <a href="{{ route('student.coins.purchase') }}" class="btn btn-secondary">{{ app()->getLocale() == 'ar' ? 'اشترِ عملات' : 'Buy Coins' }}</a>
     </div>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <h3>Coin Balance</h3>
+            <h3>{{ app()->getLocale() == 'ar' ? 'رصيد العملات' : 'Coin Balance' }}</h3>
             <div class="value">{{ auth()->user()->studentProfile->coins_balance ?? 0 }}</div>
         </div>
         <div class="stat-card">
-            <h3>Total Lessons</h3>
+            <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الحصص' : 'Total Lessons' }}</h3>
             <div class="value">{{ auth()->user()->studentProfile->total_lessons ?? 0 }}</div>
         </div>
         <div class="stat-card">
-            <h3>Active Bookings</h3>
+            <h3>{{ app()->getLocale() == 'ar' ? 'الحجوزات النشطة' : 'Active Bookings' }}</h3>
             <div class="value">{{ $activeBookings ?? 0 }}</div>
         </div>
         <div class="stat-card">
-            <h3>Total Spent</h3>
-            <div class="value">{{ auth()->user()->studentProfile->total_spent ?? 0 }} EGP</div>
+            <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الإنفاق' : 'Total Spent' }}</h3>
+            <div class="value">{{ auth()->user()->studentProfile->total_spent ?? 0 }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
         </div>
     </div>
 
     <div class="section-card">
-        <h2>My Bookings</h2>
+        <h2>{{ app()->getLocale() == 'ar' ? 'حجوزاتي' : 'My Bookings' }}</h2>
         @if(isset($bookings) && $bookings->count() > 0)
             @foreach($bookings as $booking)
                 <div class="booking-item">
                     <div class="booking-info">
-                        <h4>{{ $booking->tutor->name ?? 'Tutor' }} - {{ $booking->subject->name ?? 'Subject' }}</h4>
-                        <p>{{ $booking->scheduled_at->format('M d, Y H:i') }} • {{ $booking->lesson_mode }}</p>
+                        <h4>{{ $booking->tutor->name ?? 'Tutor' }} - {{ $booking->subject->localized_name ?? ($booking->subject->name ?? __('messages.subject')) }}</h4>
+                        <p>{{ $booking->scheduled_at->format('M d, Y H:i') }} • {{ app()->getLocale() == 'ar' ? ($booking->lesson_mode == 'online' ? 'أونلاين' : 'حضوري') : $booking->lesson_mode }}</p>
                     </div>
-                    <span class="status-badge status-{{ $booking->lesson_status }}">{{ ucfirst($booking->lesson_status) }}</span>
+                    <span class="status-badge status-{{ $booking->lesson_status }}">{{ $booking->lesson_status }}</span>
                 </div>
             @endforeach
         @else
             <div class="empty-state">
-                <p>No bookings yet. <a href="{{ route('tutors.index') }}">Find a tutor</a> to get started!</p>
+                <p>{{ app()->getLocale() == 'ar' ? 'لا توجد حجوزات بعد. ' : 'No bookings yet. ' }}<a href="{{ route('tutors.index') }}">{{ app()->getLocale() == 'ar' ? 'ابحث عن معلم' : 'Find a tutor' }}</a>{{ app()->getLocale() == 'ar' ? ' للبدء!' : ' to get started!' }}</p>
             </div>
         @endif
     </div>

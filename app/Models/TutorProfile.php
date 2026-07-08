@@ -26,12 +26,18 @@ protected $fillable = [
     'verification_status',
     'total_earnings',
     'available_balance',
+    'is_sponsored',
+    'sponsored_until',
+    'service_types',
 ];
     protected $casts = [
         'hourly_rate' => 'decimal:2',
         'total_earnings' => 'decimal:2',
         'available_balance' => 'decimal:2',
         'badge_awarded_at' => 'datetime',
+        'is_sponsored' => 'boolean',
+        'sponsored_until' => 'datetime',
+        'service_types' => 'array',
     ];
 
     public function user()

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Tutor Dashboard - OstazON')
+@section('title', __('messages.dashboard') . ' - OstazON')
 
 @section('content')
 <style>
@@ -27,57 +27,58 @@
 
 <div class="dashboard-container">
     <div class="dashboard-header">
-        <h1>Welcome, {{ auth()->user()->name }}!</h1>
+        <h1>{{ app()->getLocale() == 'ar' ? 'مرحباً، ' : 'Welcome, ' }}{{ auth()->user()->name }}!</h1>
     </div>
 
     @if(auth()->user()->tutorProfile->verification_status === 'pending')
         <div class="verification-alert">
-            <p>⚠️ Your profile is pending verification. Complete your profile to start accepting students.</p>
-            <a href="{{ route('tutor.verification') }}" class="btn btn-secondary">Complete Profile</a>
+            <p>{{ app()->getLocale() == 'ar' ? '⚠️ ملفك الشخصي قيد المراجعة. أكمل ملفك لبدء استقبال الطلاب.' : '⚠️ Your profile is pending verification. Complete your profile to start accepting students.' }}</p>
+            <a href="{{ route('tutor.verification') }}" class="btn btn-secondary">{{ app()->getLocale() == 'ar' ? 'أكمل الملف' : 'Complete Profile' }}</a>
         </div>
     @endif
 
     <div class="action-buttons">
-        <a href="{{ route('tutor.profile') }}" class="btn btn-primary">Edit Profile</a>
-        <a href="{{ route('tutor.bookings') }}" class="btn btn-outline">My Bookings</a>
-        <a href="{{ route('tutor.earnings') }}" class="btn btn-outline">Earnings</a>
-        <a href="{{ route('tutor.withdrawals') }}" class="btn btn-secondary">Withdraw</a>
+        <a href="{{ route('tutor.profile') }}" class="btn btn-primary">{{ app()->getLocale() == 'ar' ? 'تعديل الملف' : 'Edit Profile' }}</a>
+        <a href="{{ route('tutor.proposals') }}" class="btn btn-outline">{{ app()->getLocale() == 'ar' ? 'الطلبات المتاحة' : 'Available Requests' }}</a>
+        <a href="{{ route('tutor.bookings') }}" class="btn btn-outline">{{ app()->getLocale() == 'ar' ? 'حجوزاتي' : 'My Bookings' }}</a>
+        <a href="{{ route('tutor.earnings') }}" class="btn btn-outline">{{ app()->getLocale() == 'ar' ? 'الأرباح' : 'Earnings' }}</a>
+        <a href="{{ route('tutor.withdrawals') }}" class="btn btn-secondary">{{ app()->getLocale() == 'ar' ? 'سحب' : 'Withdraw' }}</a>
     </div>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <h3>Available Balance</h3>
-            <div class="value">{{ auth()->user()->tutorProfile->available_balance ?? 0 }} EGP</div>
+            <h3>{{ app()->getLocale() == 'ar' ? 'الرصيد المتاح' : 'Available Balance' }}</h3>
+            <div class="value">{{ auth()->user()->tutorProfile->available_balance ?? 0 }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
         </div>
         <div class="stat-card">
-            <h3>Total Earnings</h3>
-            <div class="value">{{ auth()->user()->tutorProfile->total_earnings ?? 0 }} EGP</div>
+            <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الأرباح' : 'Total Earnings' }}</h3>
+            <div class="value">{{ auth()->user()->tutorProfile->total_earnings ?? 0 }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
         </div>
         <div class="stat-card">
-            <h3>Total Lessons</h3>
+            <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الحصص' : 'Total Lessons' }}</h3>
             <div class="value">{{ auth()->user()->tutorProfile->total_lessons ?? 0 }}</div>
         </div>
         <div class="stat-card">
-            <h3>Rating</h3>
+            <h3>{{ app()->getLocale() == 'ar' ? 'التقييم' : 'Rating' }}</h3>
             <div class="value">⭐ {{ number_format(auth()->user()->reviewsAsTutor->avg('rating') ?? 0, 1) }}</div>
         </div>
     </div>
 
     <div class="section-card">
-        <h2>Upcoming Bookings</h2>
+        <h2>{{ app()->getLocale() == 'ar' ? 'الحجوزات القادمة' : 'Upcoming Bookings' }}</h2>
         @if(isset($upcomingBookings) && $upcomingBookings->count() > 0)
             @foreach($upcomingBookings as $booking)
                 <div class="booking-item">
                     <div>
-                        <h4>{{ $booking->student->name ?? 'Student' }} - {{ $booking->subject->name ?? 'Subject' }}</h4>
+                        <h4>{{ $booking->student->name ?? 'Student' }} - {{ $booking->subject->localized_name ?? ($booking->subject->name ?? __('messages.subject')) }}</h4>
                         <p>{{ $booking->scheduled_at->format('M d, Y H:i') }}</p>
                     </div>
-                    <span class="status-badge status-{{ $booking->lesson_status }}">{{ ucfirst($booking->lesson_status) }}</span>
+                    <span class="status-badge status-{{ $booking->lesson_status }}">{{ __($booking->lesson_status) }}</span>
                 </div>
             @endforeach
         @else
             <div class="empty-state">
-                <p>No upcoming bookings. Make sure your profile is complete and verified!</p>
+                <p>{{ app()->getLocale() == 'ar' ? 'لا توجد حجوزات قادمة. تأكد من اكتمال ملفك والتحقق منه!' : 'No upcoming bookings. Make sure your profile is complete and verified!' }}</p>
             </div>
         @endif
     </div>

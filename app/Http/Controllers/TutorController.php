@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use Illuminate\Http\Request;
 
 class TutorController extends Controller
 {
     public function dashboard()
     {
-        return view('tutor.dashboard');
+        $upcomingBookings = Booking::where('tutor_id', auth()->id())
+            ->whereIn('lesson_status', ['scheduled', 'confirmed'])
+            ->with('student', 'subject')
+            ->orderBy('scheduled_at')
+            ->get();
+
+        return view('tutor.dashboard', compact('upcomingBookings'));
     }
 
     public function profile()

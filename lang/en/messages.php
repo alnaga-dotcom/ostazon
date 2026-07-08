@@ -19,8 +19,8 @@ return [
     'hero_subtitle' => 'OstazON connects you with verified tutors in all subjects. Private lessons, assignment help, and exam preparation.',
     'find_tutor' => 'Find a Tutor',
     'become_tutor' => 'Become a Tutor',
-    'money_back_guarantee' => 'Money-Back Guarantee',
-    'guarantee_text' => 'First lesson free or full refund',
+    'money_back_guarantee' => 'First lesson free or full refund*',
+    'guarantee_text' => 'Terms & conditions apply',
 
     // Trust Bar
     'secure_payments' => 'Secure Payments',
@@ -125,4 +125,62 @@ return [
     'arbitration_fee' => 'Arbitration Fee: 20% of lesson value',
     'frozen_period' => 'Frozen Period: 7 Days',
     'claim_now' => 'File a Claim',
+
+    // Chat
+    'messages' => 'Messages',
+
+    // Marketplace
+    'marketplace' => 'Marketplace',
+
+    // Service Types
+    'service_type' => 'Service Type',
+    'assignment' => 'Assignment Help',
+    'exam_help' => 'Exam Prep',
+    'project_help' => 'Project Help',
+    'all_services' => 'All Services',
+
+    // Request Subject
+    'request_subject' => 'Request a Subject',
+    'request_subject_title' => 'Can\'t find your subject?',
+    'request_subject_desc' => 'Request a new subject and we\'ll find tutors for it',
+    'subject_name' => 'Subject Name',
+    'your_message' => 'Your Message (optional)',
+    'submit_request' => 'Submit Request',
+    'request_sent' => 'Your request has been submitted successfully',
+    'or_request' => 'Or request a new subject',
+
+    // Countries
+    'all_countries' => 'All Countries',
+    'egypt' => 'Egypt',
+    'saudi_arabia' => 'Saudi Arabia',
+    'uae' => 'UAE',
+    'kuwait' => 'Kuwait',
+    'qatar' => 'Qatar',
+    'oman' => 'Oman',
+    'bahrain' => 'Bahrain',
+    'jordan' => 'Jordan',
+    'lebanon' => 'Lebanon',
+    'iraq' => 'Iraq',
+    'syria' => 'Syria',
+    'palestine' => 'Palestine',
+    'morocco' => 'Morocco',
+    'algeria' => 'Algeria',
+    'tunisia' => 'Tunisia',
+    'libya' => 'Libya',
+    'sudan' => 'Sudan',
+    'yemen' => 'Yemen',
+
+    // Requests & Proposals
+    'new_request' => 'New Request',
+    'my_requests' => 'My Requests',
+    'proposals' => 'Proposals',
+    'request_posted' => 'Your tutoring request has been posted successfully',
+    'proposal_accepted' => 'Proposal accepted successfully',
+    'proposal_submitted' => 'Your proposal has been submitted successfully',
+    'already_proposed' => 'You have already submitted a proposal for this request',
+    'cannot_propose_own' => 'You cannot propose on your own request',
+    'proposal_not_pending' => 'This proposal is no longer available',
+    'request_not_open' => 'This request is no longer accepting proposals',
+    'insufficient_coins_request' => 'You need at least 10 coins to post a request. Purchase coins from your dashboard.',
+    'purchase_submitted' => 'Purchase request submitted! We will verify your payment and credit the coins shortly.',
 ];

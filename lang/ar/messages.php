@@ -19,8 +19,8 @@ return [
     'hero_subtitle' => 'منصة OstazON تربطك بمعلمين موثوقين في جميع المواد. دروس خصوصية، مساعدة في الواجبات، وتحضير للامتحانات.',
     'find_tutor' => 'ابحث عن معلم',
     'become_tutor' => 'كن معلماً',
-    'money_back_guarantee' => 'ضمان استرداد المال',
-    'guarantee_text' => 'أول درسة مجانية أو استرداد كامل',
+    'money_back_guarantee' => 'أول حصة مجانية أو استرداد المبلغ كاملا',
+    'guarantee_text' => 'حسب الشروط و الاحكام',
 
     // Trust Bar
     'secure_payments' => 'مدفوعات آمنة',
@@ -125,4 +125,62 @@ return [
     'arbitration_fee' => 'رسوم التحكيم: 20% من قيمة الحصة',
     'frozen_period' => 'فترة تجميد الأموال: 7 أيام',
     'claim_now' => 'تقديم دعوى',
+
+    // Chat
+    'messages' => 'الرسائل',
+
+    // Marketplace
+    'marketplace' => 'السوق',
+
+    // Service Types
+    'service_type' => 'نوع الخدمة',
+    'assignment' => 'مساعدة في الواجبات',
+    'exam_help' => 'تحضير امتحانات',
+    'project_help' => 'مساعدة في المشاريع',
+    'all_services' => 'جميع الخدمات',
+
+    // Request Subject
+    'request_subject' => 'طلب مادة جديدة',
+    'request_subject_title' => 'لم تجد المادة التي تبحث عنها؟',
+    'request_subject_desc' => 'يمكنك طلب إضافة مادة جديدة وسنعمل على توفير معلمين لها',
+    'subject_name' => 'اسم المادة',
+    'your_message' => 'رسالتك (اختياري)',
+    'submit_request' => 'إرسال الطلب',
+    'request_sent' => 'تم إرسال طلبك بنجاح',
+    'or_request' => 'أو اطلب مادة جديدة',
+
+    // Countries
+    'all_countries' => 'جميع الدول',
+    'egypt' => 'مصر',
+    'saudi_arabia' => 'المملكة العربية السعودية',
+    'uae' => 'الإمارات العربية المتحدة',
+    'kuwait' => 'الكويت',
+    'qatar' => 'قطر',
+    'oman' => 'عُمان',
+    'bahrain' => 'البحرين',
+    'jordan' => 'الأردن',
+    'lebanon' => 'لبنان',
+    'iraq' => 'العراق',
+    'syria' => 'سوريا',
+    'palestine' => 'فلسطين',
+    'morocco' => 'المغرب',
+    'algeria' => 'الجزائر',
+    'tunisia' => 'تونس',
+    'libya' => 'ليبيا',
+    'sudan' => 'السودان',
+    'yemen' => 'اليمن',
+
+    // Requests & Proposals
+    'new_request' => 'طلب جديد',
+    'my_requests' => 'طلباتي',
+    'proposals' => 'العروض',
+    'request_posted' => 'تم نشر طلب التدريس بنجاح',
+    'proposal_accepted' => 'تم قبول العرض بنجاح',
+    'proposal_submitted' => 'تم تقديم عرضك بنجاح',
+    'already_proposed' => 'لقد قدمت عرضاً لهذا الطلب بالفعل',
+    'cannot_propose_own' => 'لا يمكنك تقديم عرض على طلبك الخاص',
+    'proposal_not_pending' => 'هذا العرض غير متاح بعد الآن',
+    'request_not_open' => 'هذا الطلب لم يعد يقبل عروضاً جديدة',
+    'insufficient_coins_request' => 'تحتاج إلى 10 عملات على الأقل لنشر طلب. اشترِ عملات من لوحة التحكم.',
+    'purchase_submitted' => 'تم إرسال طلب الشراء! سنقوم بالتحقق من الدفع وإضافة العملات قريباً.',
 ];

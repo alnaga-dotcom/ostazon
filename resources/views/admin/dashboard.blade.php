@@ -65,6 +65,11 @@
             <h3>Disputes</h3>
             <p>Resolve student-tutor disputes</p>
         </a>
+        <a href="{{ route('admin.arbitrations') }}" class="action-card">
+            <div class="icon">⚙️</div>
+            <h3>Arbitrations</h3>
+            <p>Review and resolve arbitration cases</p>
+        </a>
         <a href="{{ route('admin.analytics') }}" class="action-card">
             <div class="icon">📊</div>
             <h3>Analytics</h3>

@@ -22,4 +22,29 @@ class Subject extends Model
             ->withPivot('hourly_rate', 'is_primary')
             ->withTimestamps();
     }
+
+    public function getLocalizedNameAttribute()
+    {
+        $map = [
+            'Mathematics' => 'math',
+            'Physics' => 'physics',
+            'Chemistry' => 'chemistry',
+            'Biology' => 'biology',
+            'English' => 'english',
+            'Arabic' => 'arabic_lang',
+            'Programming' => 'programming',
+            'History' => 'history',
+            'Geography' => 'geography',
+            'Economics' => 'economics',
+            'French' => 'french',
+            'Science' => 'science',
+        ];
+
+        $key = isset($map[$this->name]) ? 'messages.' . $map[$this->name] : 'messages.' . strtolower($this->name);
+        $trans = __($key);
+        if ($trans !== $key) {
+            return $trans;
+        }
+        return $this->name;
+    }
 }

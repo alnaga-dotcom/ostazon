@@ -11,6 +11,10 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CoinController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ContentController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\SubjectRequestController;
 use App\Http\Controllers\Admin\TutorController as AdminTutorController;
 
 /*
@@ -53,7 +57,6 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     Route::get('/bookings', [LessonController::class, 'studentBookings'])->name('bookings');
     Route::post('/bookings', [LessonController::class, 'store'])->name('bookings.store');
     Route::post('/bookings/{id}/cancel', [LessonController::class, 'cancel'])->name('bookings.cancel');
-    Route::post('/bookings/{id}/dispute', [LessonController::class, 'fileDispute'])->name('bookings.dispute');
 
     // Reviews
     Route::get('/reviews/create/{booking}', [ReviewController::class, 'create'])->name('reviews.create');
@@ -106,6 +109,12 @@ Route::middleware(['auth'])->prefix('tutor')->name('tutor.')->group(function () 
 |--------------------------------------------------------------------------
 */
 
+Route::get('/arbitration', [PageController::class, 'arbitration'])->name('arbitration');
+Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+
+Route::post('/request-subject', [SubjectRequestController::class, 'store'])->name('subject.request')->middleware('auth');
+
 Route::get('/locale/{locale}', function ($locale) {
     if (in_array($locale, ['ar', 'en'])) {
         session(['locale' => $locale]);
@@ -113,6 +122,34 @@ Route::get('/locale/{locale}', function ($locale) {
     }
     return redirect()->back();
 })->name('locale.switch');
+
+/*
+|--------------------------------------------------------------------------
+| Chat Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->prefix('chat')->name('chat.')->group(function () {
+    Route::get('/', [ChatController::class, 'inbox'])->name('inbox');
+    Route::get('/{user}', [ChatController::class, 'conversation'])->name('conversation');
+    Route::post('/{user}/send', [ChatController::class, 'send'])->name('send');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Marketplace Routes (Content)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->prefix('marketplace')->name('marketplace.')->group(function () {
+    Route::get('/my', [ContentController::class, 'my'])->name('my');
+    Route::get('/create', [ContentController::class, 'create'])->name('create');
+    Route::post('/', [ContentController::class, 'store'])->name('store');
+    Route::post('/{content}/purchase', [ContentController::class, 'purchase'])->name('purchase');
+});
+
+Route::get('/marketplace', [ContentController::class, 'index'])->name('marketplace.index');
+Route::get('/marketplace/{content}', [ContentController::class, 'show'])->name('marketplace.show');
 
 /*
 |--------------------------------------------------------------------------

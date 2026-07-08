@@ -1,0 +1,23 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('tutor_profiles', function (Blueprint $table) {
+            $table->boolean('is_sponsored')->default(false)->after('available_balance');
+            $table->timestamp('sponsored_until')->nullable()->after('is_sponsored');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('tutor_profiles', function (Blueprint $table) {
+            $table->dropColumn(['is_sponsored', 'sponsored_until']);
+        });
+    }
+};

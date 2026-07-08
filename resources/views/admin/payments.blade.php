@@ -76,6 +76,7 @@
                         </form>
                         <form method="POST" action="{{ route('admin.payments.reject', $payment->id) }}">
                             @csrf
+                            <input type="text" class="admin-notes" name="notes" placeholder="Rejection reason (optional)">
                             <button type="submit" class="btn btn-outline" style="border-color: var(--accent); color: var(--accent);">❌ Reject</button>
                         </form>
                     </div>
@@ -124,9 +125,13 @@
 <script>
     function showTab(tab) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
         document.getElementById('pending-tab').style.display = tab === 'pending' ? 'block' : 'none';
         document.getElementById('verified-tab').style.display = tab === 'verified' ? 'block' : 'none';
+        if (tab === 'pending') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+        }
     }
     function openModal(src) {
         document.getElementById('modalImage').src = src;

@@ -133,10 +133,10 @@ class LessonController extends Controller
         $updateData = [
             'lesson_status' => 'completed',
             'completed_at' => now(),
+            'frozen_until' => now()->addDays(7),
         ];
 
         if ($booking->platform_guarantee) {
-            // Move from paid to escrow (waiting for dispute window or review)
             $updateData['payment_status'] = 'escrow';
         } else {
             $updateData['payment_status'] = 'off_platform';
@@ -144,7 +144,7 @@ class LessonController extends Controller
 
         $booking->update($updateData);
 
-        return back()->with('success', 'Lesson marked as completed!');
+        return back()->with('success', 'Lesson marked as completed! Funds are frozen for 7 days for the arbitration window.');
     }
 
     public function cancel(Request $request, $id)
@@ -181,28 +181,4 @@ class LessonController extends Controller
         return back()->with('success', 'Booking cancelled successfully.');
     }
 
-    public function fileDispute(Request $request, $id)
-    {
-        $booking = Booking::findOrFail($id);
-
-        if ($booking->student_id !== Auth::id()) {
-            return back()->with('error', 'Only students can file disputes.');
-        }
-
-        if ($booking->lesson_status !== 'completed') {
-            return back()->with('error', 'Can only dispute completed lessons.');
-        }
-
-        if (!$booking->platform_guarantee) {
-            return back()->with('error', 'No platform guarantee for this booking.');
-        }
-
-        if (now()->gt($booking->dispute_until)) {
-            return back()->with('error', 'Dispute window has expired.');
-        }
-
-        $booking->update(['dispute_filed' => true]);
-
-        return back()->with('success', 'Dispute filed. Our arbitration team will review within 72 hours.');
-    }
 }

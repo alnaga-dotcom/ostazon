@@ -49,7 +49,7 @@
 <h2>{{ app()->getLocale() == 'ar' ? 'المواد' : 'Subjects' }}</h2>                <div class="subjects-list">
   @foreach($tutor->tutorProfile->subjects as $subject)
     <span class="subject-tag">
-        {{ app()->getLocale() == 'ar' ? __('messages.' . strtolower($subject->name)) : $subject->name }}
+        {{ $subject->localized_name }}
     </span>
 @endforeach
               </div>
@@ -138,6 +138,34 @@
                 </div>
 
         <div class="right-column">
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                @auth
+                    <a href="{{ route('chat.conversation', $tutor->id) }}"
+                       style="flex: 1; text-align: center; padding: 12px; background: #166534; color: white; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none;">
+                        💬 {{ app()->getLocale() == 'ar' ? 'راسلني' : 'Message' }}
+                    </a>
+                    @if(auth()->user()->isStudent())
+                        <button onclick="revealContact({{ $tutor->id }})"
+                                style="flex: 1; text-align: center; padding: 12px; background: #D97706; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;">
+                            👁 {{ app()->getLocale() == 'ar' ? 'عرض جهة الاتصال' : 'Reveal Contact' }}
+                        </button>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}"
+                       style="flex: 1; text-align: center; padding: 12px; background: #166534; color: white; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none;">
+                        💬 {{ app()->getLocale() == 'ar' ? 'سجل الدخول للتواصل' : 'Login to Contact' }}
+                    </a>
+                @endauth
+            </div>
+
+            <div id="contact-info" style="display: none; background: #ECFDF0; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 2px solid #A7F3D0;">
+                <h4 style="font-size: 14px; font-weight: 700; color: #166534; margin-bottom: 8px;">
+                    {{ app()->getLocale() == 'ar' ? 'معلومات الاتصال' : 'Contact Info' }}
+                </h4>
+                <p style="font-size: 14px; color: #14532D; margin: 4px 0;">📧 <span id="revealed-email"></span></p>
+                <p style="font-size: 14px; color: #14532D; margin: 4px 0;">📱 <span id="revealed-phone"></span></p>
+            </div>
+
             <div class="booking-form">
                 <h2>Book a Lesson</h2>
                 <div style="text-align: center; margin-bottom: 20px;">
@@ -153,7 +181,7 @@
 <label>{{ app()->getLocale() == 'ar' ? 'المادة' : 'Subject' }}</label>                                <select name="subject_id" class="form-control" required>
 @foreach($tutor->tutorProfile->subjects as $subject)
     <option value="{{ $subject->id }}">
-        {{ app()->getLocale() == 'ar' ? __('messages.' . strtolower($subject->name)) : $subject->name }}
+        {{ $subject->localized_name }}
     </option>
 @endforeach
                                 </select>
@@ -215,7 +243,7 @@
                         <h4 style="font-size: 14px; font-weight: 600;">{{ $similar->name }}</h4>
 <p style="font-size: 12px; color: var(--text-light);">
     @if($similar->tutorProfile->subjects->first())
-        {{ app()->getLocale() == 'ar' ? __('messages.' . strtolower($similar->tutorProfile->subjects->first()->name)) : $similar->tutorProfile->subjects->first()->name }}
+        {{ $similar->tutorProfile->subjects->first()->localized_name ?? $similar->tutorProfile->subjects->first()->name }}
     @endif
 </p>
                     </a>
@@ -224,4 +252,39 @@
         </div>
     @endif
 </div>
+<script>
+    function revealContact(tutorId) {
+        var btn = event.target;
+        btn.disabled = true;
+        btn.textContent = '{{ app()->getLocale() == 'ar' ? 'جاري الكشف...' : 'Revealing...' }}';
+
+        fetch('{{ route("student.coins.reveal") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ tutor_id: tutorId })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                document.getElementById('revealed-email').textContent = data.email;
+                document.getElementById('revealed-phone').textContent = data.phone;
+                document.getElementById('contact-info').style.display = 'block';
+                btn.textContent = '{{ app()->getLocale() == 'ar' ? 'تم الكشف' : 'Revealed' }} ✓';
+                btn.style.background = '#10B981';
+            } else {
+                alert(data.message || '{{ app()->getLocale() == 'ar' ? 'حدث خطأ' : 'An error occurred' }}');
+                btn.disabled = false;
+                btn.textContent = '👁 {{ app()->getLocale() == 'ar' ? 'عرض جهة الاتصال' : 'Reveal Contact' }}';
+            }
+        })
+        .catch(function() {
+            alert('{{ app()->getLocale() == 'ar' ? 'حدث خطأ في الاتصال' : 'Network error' }}');
+            btn.disabled = false;
+            btn.textContent = '👁 {{ app()->getLocale() == 'ar' ? 'عرض جهة الاتصال' : 'Reveal Contact' }}';
+        });
+    }
+</script>
 @endsection

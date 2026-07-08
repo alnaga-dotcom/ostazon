@@ -54,7 +54,7 @@
                             <textarea name="reason" required minlength="20" maxlength="1000" rows="4" 
                                 class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary"
                                 placeholder="Describe the issue in detail (minimum 20 characters)..."></textarea>
-                            <p class="text-xs text-gray-500 mt-1">Minimum 20 characters. Be specific and provide details.</p>
+                            <p class="text-xs text-gray-600 mt-1">Minimum 20 characters. Be specific and provide details.</p>
                         </div>
 
                         <div>
@@ -79,7 +79,7 @@
                     </form>
                 </div>
             @else
-                <div class="bg-gray-50 rounded-xl p-4 text-gray-500 text-sm">
+                <div class="bg-gray-50 rounded-xl p-4 text-gray-600 text-sm">
                     @if($booking->isFrozen())
                         Dispute window closes in {{ $booking->frozen_until->diffForHumans() }}.
                     @else
@@ -115,27 +115,27 @@
         <h2 class="text-lg font-bold text-text-dark mb-4">Booking Details</h2>
         <div class="grid md:grid-cols-2 gap-4 text-sm">
             <div>
-                <span class="text-gray-500">Student:</span>
+                <span class="text-gray-600">Student:</span>
                 <span class="font-medium text-text-dark ml-2">{{ $booking->student->name }}</span>
             </div>
             <div>
-                <span class="text-gray-500">Tutor:</span>
+                <span class="text-gray-600">Tutor:</span>
                 <span class="font-medium text-text-dark ml-2">{{ $booking->tutor->name }}</span>
             </div>
             <div>
-                <span class="text-gray-500">Subject:</span>
+                <span class="text-gray-600">Subject:</span>
                 <span class="font-medium text-text-dark ml-2">{{ $booking->subject->name ?? 'N/A' }}</span>
             </div>
             <div>
-                <span class="text-gray-500">Amount:</span>
-                <span class="font-medium text-text-dark ml-2">{{ $booking->total_price }} coins</span>
+                <span class="text-gray-600">Amount:</span>
+                <span class="font-medium text-text-dark ml-2">{{ $booking->lesson_fee }} coins</span>
             </div>
             <div>
-                <span class="text-gray-500">Completed:</span>
+                <span class="text-gray-600">Completed:</span>
                 <span class="font-medium text-text-dark ml-2">{{ $booking->completed_at ? $booking->completed_at->format('M d, Y') : 'N/A' }}</span>
             </div>
             <div>
-                <span class="text-gray-500">Frozen Until:</span>
+                <span class="text-gray-600">Frozen Until:</span>
                 <span class="font-medium text-text-dark ml-2">{{ $booking->frozen_until ? $booking->frozen_until->format('M d, Y') : 'N/A' }}</span>
             </div>
         </div>

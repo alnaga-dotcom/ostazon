@@ -43,11 +43,11 @@
                                 <div class="text-sm font-medium text-text-dark">
                                     {{ $arbitration->claimant_type === 'student' ? $arbitration->student->name : $arbitration->tutor->name }}
                                 </div>
-                                <div class="text-xs text-gray-500">{{ ucfirst($arbitration->claimant_type) }}</div>
+                                <div class="text-xs text-gray-600">{{ ucfirst($arbitration->claimant_type) }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm text-text-dark">{{ $arbitration->subject->name ?? 'N/A' }}</div>
-                                <div class="text-xs text-gray-500">{{ $arbitration->total_price }} coins</div>
+                                <div class="text-xs text-gray-600">{{ $arbitration->lesson_fee }} coins</div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm text-gray-700 max-w-xs truncate">{{ $arbitration->dispute_reason }}</div>
@@ -55,7 +55,7 @@
                             <td class="px-6 py-4">
                                 <span class="text-sm font-semibold text-secondary">{{ $arbitration->arbitration_fee_amount }} coins</span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-500">
+                            <td class="px-6 py-4 text-sm text-gray-600">
                                 {{ $arbitration->disputed_at->diffForHumans() }}
                             </td>
                             <td class="px-6 py-4">
@@ -76,7 +76,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-600">
                                 <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 No pending arbitrations
                             </td>

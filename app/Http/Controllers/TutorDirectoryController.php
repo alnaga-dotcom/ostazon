@@ -55,9 +55,19 @@ class TutorDirectoryController extends Controller
             });
         }
 
-        if ($request->lesson_mode) {
+        $classType = $request->class_type ?? $request->lesson_mode;
+        if ($classType) {
+            $query->whereHas('tutorProfile', function ($q) use ($classType) {
+                if (in_array($classType, ['online', 'in_person', 'both'])) {
+                    $q->where('lesson_mode', $classType);
+                }
+            });
+        }
+
+        // Filter by service type (assignment, exam_help, project_help)
+        if ($request->service_type) {
             $query->whereHas('tutorProfile', function ($q) use ($request) {
-                $q->where('lesson_mode', $request->lesson_mode);
+                $q->whereJsonContains('service_types', $request->service_type);
             });
         }
 
@@ -77,11 +87,68 @@ class TutorDirectoryController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $tutors = $query->orderBy('created_at', 'desc')->paginate(12);
-        $subjects = Subject::orderBy('name')->get();
-        $countries = TutorProfile::whereNotNull('country')->distinct()->pluck('country')->sort()->values();
+        // Sponsored tutors first
+        $query->orderBy(
+            TutorProfile::select('is_sponsored')
+                ->whereColumn('user_id', 'users.id')
+                ->limit(1),
+            'desc'
+        );
 
-        return view('tutors.index', compact('tutors', 'subjects', 'countries'));
+        $sort = $request->sort ?? 'newest';
+        match ($sort) {
+            'price_asc' => $query->orderBy(
+                TutorProfile::select('hourly_rate')
+                    ->whereColumn('user_id', 'users.id')
+                    ->limit(1),
+                'asc'
+            ),
+            'price_desc' => $query->orderBy(
+                TutorProfile::select('hourly_rate')
+                    ->whereColumn('user_id', 'users.id')
+                    ->limit(1),
+                'desc'
+            ),
+            'rating' => $query->orderBy(
+                TutorProfile::select('average_rating')
+                    ->whereColumn('user_id', 'users.id')
+                    ->limit(1),
+                'desc'
+            ),
+            default => $query->orderBy('created_at', 'desc'),
+        };
+
+        $tutors = $query->paginate(12);
+        $subjects = Subject::orderBy('name')->get();
+
+        // Fallback country list if DB has none
+        $dbCountries = TutorProfile::whereNotNull('country')->distinct()->pluck('country')->sort()->values();
+        if ($dbCountries->isEmpty()) {
+            $countries = collect([
+                __('messages.egypt'),
+                __('messages.saudi_arabia'),
+                __('messages.uae'),
+                __('messages.kuwait'),
+                __('messages.qatar'),
+                __('messages.oman'),
+                __('messages.bahrain'),
+                __('messages.jordan'),
+                __('messages.lebanon'),
+                __('messages.iraq'),
+                __('messages.syria'),
+                __('messages.palestine'),
+                __('messages.morocco'),
+                __('messages.algeria'),
+                __('messages.tunisia'),
+                __('messages.libya'),
+                __('messages.sudan'),
+                __('messages.yemen'),
+            ]);
+        } else {
+            $countries = $dbCountries;
+        }
+
+        return view('tutor.index', compact('tutors', 'subjects', 'countries'));
     }
 
     public function show($id)
@@ -91,7 +158,7 @@ class TutorDirectoryController extends Controller
             ->whereHas('tutorProfile', function ($q) {
                 $q->where('verification_status', '!=', 'pending');
             })
-            ->with(['tutorProfile', 'tutorProfile.subjects', 'reviewsAsTutor.student'])
+            ->with(['tutorProfile', 'tutorProfile.subjects'])
             ->findOrFail($id);
 
         $reviews = $tutor->reviewsAsTutor()->with('student')->orderBy('created_at', 'desc')->take(10)->get();
@@ -109,6 +176,6 @@ class TutorDirectoryController extends Controller
             ->take(4)
             ->get();
 
-        return view('tutors.show', compact('tutor', 'reviews', 'similarTutors'));
+        return view('tutor.show', compact('tutor', 'reviews', 'similarTutors'));
     }
 }
