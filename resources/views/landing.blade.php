@@ -1,6 +1,8 @@
 @extends('layouts.main')
 
 @section('title', 'OstazON - ' . __('messages.hero_title'))
+@section('meta_description', 'OstazON is the leading tutoring marketplace in Egypt and the Arab world. Find expert tutors, book online lessons, and achieve academic success.')
+@section('og_image', asset('images/og-landing.png'))
 
 @section('content')
 
@@ -329,7 +331,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 ];
             @endphp
 
-            @forelse($subjects as $subject)
+            @php
+                $displaySubjects = $subjects->take(16);
+                $totalSubjects = $subjects->count();
+            @endphp
+            @forelse($displaySubjects as $subject)
                 @php
                     $slugMap = ['Mathematics'=>'math','Physics'=>'physics','Chemistry'=>'chemistry','Biology'=>'biology','English'=>'english','Arabic'=>'arabic','Programming'=>'programming','History'=>'history','Geography'=>'geography','Economics'=>'economics','French'=>'french','Science'=>'science'];
                     $sn = $slugMap[$subject->name] ?? strtolower($subject->name);
@@ -353,10 +359,14 @@ document.addEventListener('DOMContentLoaded', function() {
             @endforelse
         </div>
 
-        <!-- Request Subject Card -->
-        <div class="text-center mt-8">
-            <a href="#" onclick="document.getElementById('requestSubjectModal').classList.remove('hidden'); return false;" class="inline-flex items-center gap-2 text-primary hover:text-green-800 font-semibold transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+        <!-- View All + Request Subject -->
+        <div class="flex items-center justify-center gap-4 mt-10 flex-wrap">
+            <a href="{{ url('/tutors') }}" class="bg-secondary hover:bg-amber-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-md hover:shadow-xl transition transform hover:-translate-y-1 inline-flex items-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                {{ app()->getLocale() == 'ar' ? 'عرض كل المواد (' . $totalSubjects . ')' : 'Browse All Subjects (' . $totalSubjects . ')' }}
+            </a>
+            <a href="#" onclick="document.getElementById('requestSubjectModal').classList.remove('hidden'); return false;" class="bg-secondary hover:bg-amber-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-md hover:shadow-xl transition transform hover:-translate-y-1 inline-flex items-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                 {{ __('messages.or_request') }}
             </a>
         </div>
@@ -375,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
             @csrf
             <div class="mb-4">
                 <label class="block text-sm font-bold text-text-dark mb-2">{{ __('messages.subject_name') }}</label>
-                <input type="text" name="subject_name" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary outline-none" placeholder="{{ app()->getLocale() == 'ar' ? 'مثال: علم النفس' : 'e.g. Psychology' }}">
+                <input type="text" name="subject_name" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary outline-none" placeholder="{{ app()->getLocale() == 'ar' ? 'مثال: علم النفس، فلسفة (افصل بفاصلة)' : 'e.g. Psychology, Philosophy (comma separated)' }}">
             </div>
             <div class="mb-6">
                 <label class="block text-sm font-bold text-text-dark mb-2">{{ __('messages.your_message') }}</label>
@@ -437,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
 
                         <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                            <span class="text-primary font-bold text-lg">{{ $tutor->tutorProfile->hourly_rate ?? '—' }} <span class="text-sm text-gray-600 font-normal">/ {{ __('messages.hour') }}</span></span>
+                            <span class="text-primary font-bold text-lg">{{ number_format($tutor->tutorProfile->hourly_rate ?? 0, 0) }} <span class="text-sm text-gray-600 font-normal">/ {{ __('messages.hour') }}</span></span>
                             <div class="flex gap-2">
                                 <a href="{{ route('tutors.show', $tutor->id) }}" class="px-3 py-2 bg-surface text-primary rounded-lg text-sm font-semibold hover:bg-primary hover:text-white transition">{{ __('messages.view_profile') }}</a>
                                 <a href="{{ route('tutors.show', $tutor->id) }}#book" class="px-3 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-green-800 transition">{{ __('messages.book_now') }}</a>
@@ -454,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ];
                 @endphp
                 @foreach($dummyTutors as $tutor)
-                    <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden border border-primary/5 card-hover">
+<div class="tutor-card bg-white rounded-2xl shadow-md overflow-hidden border border-primary/5" style="border-width: 2px;">
                         <div class="h-24 bg-gradient-to-r from-primary to-accent relative">
                             <div class="absolute -bottom-10 left-1/2 -translate-x-1/2">
                                 <div class="w-20 h-20 bg-white rounded-full p-1 shadow-lg">
@@ -603,7 +613,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <li><a href="#" class="hover:text-white transition">{{ __('messages.about_us') }}</a></li>
                     <li><a href="mailto:support@ostazon.com" class="hover:text-white transition">{{ __('messages.contact') }}</a></li>
                     <li><a href="{{ route('terms') }}" class="hover:text-white transition">{{ __('messages.terms') }}</a></li>
-                    <li><a href="{{ route('terms') }}" class="hover:text-white transition">{{ __('messages.privacy') }}</a></li>
+                    <li><a href="{{ route('privacy') }}" class="hover:text-white transition">{{ __('messages.privacy') }}</a></li>
                     <li><a href="{{ route('terms') }}" class="hover:text-white transition">{{ __('messages.arbitration_policy') }}</a></li>
                     <li><a href="{{ route('faq') }}" class="hover:text-white transition">{{ app()->getLocale() == 'ar' ? 'الأسئلة الشائعة' : 'FAQ' }}</a></li>
                 </ul>

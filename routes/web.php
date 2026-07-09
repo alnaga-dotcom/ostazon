@@ -13,8 +13,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContentController;
-use App\Http\Controllers\PageController;
 use App\Http\Controllers\SubjectRequestController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\TutorController as AdminTutorController;
 
 /*
@@ -33,6 +34,11 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Password Reset
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.update');
 
 /*
 |--------------------------------------------------------------------------
@@ -67,7 +73,6 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     Route::get('/coins/purchase', [CoinController::class, 'purchase'])->name('coins.purchase');
     Route::post('/coins/purchase', [CoinController::class, 'storePurchase'])->name('coins.purchase.store');
     Route::get('/coins/history', [CoinController::class, 'history'])->name('coins.history');
-    Route::post('/coins/reveal', [CoinController::class, 'revealContact'])->name('coins.reveal');
 });
 
 /*
@@ -112,6 +117,7 @@ Route::middleware(['auth'])->prefix('tutor')->name('tutor.')->group(function () 
 Route::get('/arbitration', [PageController::class, 'arbitration'])->name('arbitration');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 
 Route::post('/request-subject', [SubjectRequestController::class, 'store'])->name('subject.request')->middleware('auth');
 
@@ -122,6 +128,18 @@ Route::get('/locale/{locale}', function ($locale) {
     }
     return redirect()->back();
 })->name('locale.switch');
+
+/*
+|--------------------------------------------------------------------------
+| Notification Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('all');
+    Route::get('/read-all', [NotificationController::class, 'readAll'])->name('read');
+    Route::get('/{id}/read', [NotificationController::class, 'markAsRead'])->name('readOne');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -195,6 +213,33 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/arbitrations', [AdminController::class, 'arbitrations'])->name('arbitrations');
     Route::post('/arbitrations/{booking}/resolve', [AdminController::class, 'resolveArbitration'])->name('arbitrations.resolve');
 
+    // Students
+    Route::get('/students', [AdminController::class, 'students'])->name('students');
+
+    // User Management
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::post('/users/{user}/ban', [AdminController::class, 'banUser'])->name('users.ban');
+    Route::post('/users/{user}/unban', [AdminController::class, 'unbanUser'])->name('users.unban');
+
+    // Subject Management
+    Route::get('/subjects', [AdminController::class, 'subjects'])->name('subjects');
+    Route::post('/subjects', [AdminController::class, 'storeSubject'])->name('subjects.store');
+    Route::put('/subjects/{subject}', [AdminController::class, 'updateSubject'])->name('subjects.update');
+    Route::delete('/subjects/{subject}', [AdminController::class, 'deleteSubject'])->name('subjects.delete');
+
+    // Subject Requests
+    Route::get('/subject-requests', [AdminController::class, 'subjectRequests'])->name('subject-requests');
+    Route::post('/subject-requests/{id}/approve', [AdminController::class, 'approveSubjectRequest'])->name('subject-requests.approve');
+    Route::post('/subject-requests/{id}/reject', [AdminController::class, 'rejectSubjectRequest'])->name('subject-requests.reject');
+
     // Analytics
     Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
+
+    // Payment Settings
+    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
+    Route::post('/settings', [AdminController::class, 'updateSettings'])->name('settings.update');
+
+    // Grant Coins
+    Route::get('/grant-coins', [AdminController::class, 'grantCoins'])->name('grant-coins');
+    Route::post('/grant-coins', [AdminController::class, 'grantCoinsStore'])->name('grant-coins.store');
 });

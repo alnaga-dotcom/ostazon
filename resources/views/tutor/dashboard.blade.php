@@ -8,6 +8,8 @@
     .dashboard-header { margin-bottom: 32px; }
     .dashboard-header h1 { font-size: 28px; font-weight: 800; }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
+    @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
     .stat-card { background: white; border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
     .stat-card h3 { font-size: 14px; color: var(--text-light); margin-bottom: 8px; }
     .stat-card .value { font-size: 28px; font-weight: 800; color: var(--primary); }
@@ -48,11 +50,11 @@
     <div class="stats-grid">
         <div class="stat-card">
             <h3>{{ app()->getLocale() == 'ar' ? 'الرصيد المتاح' : 'Available Balance' }}</h3>
-            <div class="value">{{ auth()->user()->tutorProfile->available_balance ?? 0 }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
+            <div class="value">{{ number_format(auth()->user()->tutorProfile->available_balance ?? 0, 0) }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
         </div>
         <div class="stat-card">
             <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الأرباح' : 'Total Earnings' }}</h3>
-            <div class="value">{{ auth()->user()->tutorProfile->total_earnings ?? 0 }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
+            <div class="value">{{ number_format(auth()->user()->tutorProfile->total_earnings ?? 0, 0) }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
         </div>
         <div class="stat-card">
             <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الحصص' : 'Total Lessons' }}</h3>

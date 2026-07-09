@@ -37,8 +37,14 @@
             <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'الطلاب' : 'Students' }}</h3>
             <p>{{ $ar ? 'يتعهد الطلاب باستخدام المنصة للأغراض التعليمية فقط. يجب على الطلاب احترام المعلمين والالتزام بمواعيد الحصص المتفق عليها.' : 'Students agree to use the platform for educational purposes only. Students must respect tutors and adhere to agreed lesson schedules.' }}</p>
 
+            <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'التواصل داخل المنصة' : 'On-Platform Communication' }}</h3>
+            <p>{{ $ar ? 'جميع التواصل بين الطلاب والمعلمين يتم عبر نظام المحادثة المدمج في المنصة. يمنع منعاً باتاً مشاركة أرقام الهواتف أو عناوين البريد الإلكتروني أو أي معلومات اتصال في الرسائل. المخالفون يتعرضون لإيقاف الحساب.' : 'All communication between students and tutors must take place through the platform\'s built-in chat system. Sharing phone numbers, email addresses, or any contact information in messages is strictly prohibited. Violators risk account suspension.' }}</p>
+
             <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'رسوم المنصة' : 'Platform Fees' }}</h3>
-            <p>{{ $ar ? 'تحتفظ OstazON بنسبة 15% من قيمة كل حصة دراسية كرسوم خدمة. تذهب النسبة المتبقية (85%) إلى المعلم بعد اكتمال الحصة بنجاح. جميع الرسوم واضحة وشفافة قبل تأكيد الحجز.' : 'OstazON retains 15% of each lesson fee as a service fee. The remaining 85% goes to the tutor upon successful lesson completion. All fees are clearly displayed before booking confirmation.' }}</p>
+            <p>{{ $ar ? 'تحتفظ OstazON بنسبة 5% من قيمة كل حصة دراسية كرسوم خدمة. تذهب النسبة المتبقية (95%) إلى المعلم فور اكتمال الحصة بنجاح. يمكن تعديل النسبة من قبل الإدارة وسيتم إشعار المستخدمين بأي تغييرات.' : 'OstazON retains 5% of each lesson fee as a service fee. The remaining 95% goes to the tutor immediately upon successful lesson completion. The percentage may be adjusted by management with prior notice to users.' }}</p>
+
+            <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'سحب أرباح المعلمين' : 'Tutor Withdrawals' }}</h3>
+            <p>{{ $ar ? 'يمكن للمعلمين سحب أرباحهم عندما يصل الرصيد المتاح إلى 500 جنيه أو أكثر. يتم طلب السحب من لوحة تحكم المعلم وتتم معالجته يدوياً من قبل الإدارة.' : 'Tutors can withdraw their earnings once their available balance reaches 500 EGP or more. Withdrawal requests are submitted from the tutor dashboard and processed manually by the admin team.' }}</p>
 
             <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'الملكية الفكرية' : 'Intellectual Property' }}</h3>
             <p>{{ $ar ? 'جميع المحتويات المنشورة على المنصة بما في ذلك المواد التعليمية والنصوص والصور محمية بموجب قوانين الملكية الفكرية. لا يجوز نسخ أو توزيع أو إعادة استخدام أي محتوى دون إذن صريح.' : 'All content published on the platform including educational materials, text, and images is protected by intellectual property laws. Content may not be copied, distributed, or reused without explicit permission.' }}</p>
@@ -48,35 +54,23 @@
         </div>
     </div>
 
-    <!-- 2. Money-Back Guarantee -->
+    <!-- 2. Platform Guarantee -->
     <div style="background: white; border-radius: 16px; padding: 28px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 24px;">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
             <div style="width: 40px; height: 40px; background: #FEF3C7; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🛡️</div>
             <h2 style="font-size: 20px; font-weight: 700; color: #14532D; margin: 0;">
-                {{ $ar ? 'ضمان استرداد المال' : 'Money-Back Guarantee' }}
+                {{ $ar ? 'ضمان المنصة' : 'Platform Guarantee' }}
             </h2>
         </div>
         <div style="color: #4b5563; line-height: 1.8; display: flex; flex-direction: column; gap: 16px;">
-            <p>{{ $ar ? 'نحن نضمن رضاك عن أول حصة لك على OstazON. إذا لم تكن راضياً، سنقوم باسترداد المبلغ بالكامل.' : 'We guarantee your satisfaction with your first lesson on OstazON. If you are not satisfied, we will refund the full amount.' }}</p>
+            <p>{{ $ar ? 'جميع الحجوزات على OstazON مشمولة بضمان المنصة إلزامياً. يتم خصم قيمة الحصة من عملات الطالب عند الحجز وإيداعها للمعلم فور اكتمال الحصة بنجاح.' : 'All bookings on OstazON are covered by the platform guarantee. The lesson fee is deducted from the student\'s coins at booking and released to the tutor immediately upon successful lesson completion.' }}</p>
 
-            <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'الشروط' : 'Eligibility' }}</h3>
+            <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'الإلغاء والاسترداد' : 'Cancellation & Refund' }}</h3>
             <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-                <li>{{ $ar ? 'يجب اختيار "ضمان المنصة" عند الحجز' : 'Must select "Platform Guarantee" at booking' }}</li>
-                <li>{{ $ar ? 'يجب تقديم طلب الاسترداد خلال 48 ساعة من انتهاء الحصة' : 'Refund request must be submitted within 48 hours of lesson completion' }}</li>
-                <li>{{ $ar ? 'الضمان ساري فقط على أول حصة مع كل معلم' : 'The guarantee applies only to the first lesson with each tutor' }}</li>
-                <li>{{ $ar ? 'يجب تقديم سبب معقول لطلب الاسترداد' : 'A reasonable reason for the refund must be provided' }}</li>
+                <li>{{ $ar ? 'يمكن إلغاء الحصة قبل بدايتها فقط' : 'Lessons can only be cancelled before they start' }}</li>
+                <li>{{ $ar ? 'في حالة الإلغاء قبل البدء، يسترد الطالب المبلغ كاملاً في رصيد العملات' : 'If cancelled before start, the student receives a full refund to their coin balance' }}</li>
+                <li>{{ $ar ? 'بعد اكتمال الحصة، يتم تحويل المبلغ للمعلم فوراً' : 'After lesson completion, the amount is immediately released to the tutor' }}</li>
             </ul>
-
-            <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'عملية الاسترداد' : 'Refund Process' }}</h3>
-            <ol style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-                <li>{{ $ar ? 'اذهب إلى صفحة الحجز واضغط على "طلب استرداد"' : 'Go to the booking page and click "Request Refund"' }}</li>
-                <li>{{ $ar ? 'قدم سبب طلبك (اختياري)' : 'Provide your reason (optional)' }}</li>
-                <li>{{ $ar ? 'سيتم مراجعة طلبك خلال 24 ساعة' : 'Your request will be reviewed within 24 hours' }}</li>
-                <li>{{ $ar ? 'في حالة الموافقة، سيتم إرجاع المبلغ إلى رصيد العملات الخاص بك' : 'If approved, the amount will be returned to your coin wallet' }}</li>
-            </ol>
-
-            <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'الاستثناءات' : 'Exclusions' }}</h3>
-            <p>{{ $ar ? 'لا ينطبق الضمان في الحالات التالية: عدم حضور الطالب للحصة، إلغاء الحصة بعد بدئها، أو إذا كان سبب عدم الرضا خارج نطاق سيطرة المعلم (مثل مشكلات تقنية من طرف الطالب).' : 'The guarantee does not apply in the following cases: student no-show, cancellation after the lesson has started, or if the reason for dissatisfaction is outside the tutor\'s control (e.g. technical issues on the student\'s side).' }}</p>
         </div>
     </div>
 
@@ -93,10 +87,10 @@
 
             <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'تقديم دعوى' : 'Filing a Claim' }}</h3>
             <ol style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-                <li>{{ $ar ? 'تأكد من اكتمال الحصة واختيار ضمان المنصة عند الحجز' : 'Ensure the lesson is completed and platform guarantee was selected' }}</li>
-                <li>{{ $ar ? 'يجب تقديم الدعوى خلال 7 أيام من اكتمال الحصة' : 'Claims must be filed within 7 days of lesson completion' }}</li>
+                <li>{{ $ar ? 'يمكن تقديم النزاع خلال 7 أيام من اكتمال الحصة' : 'Disputes can be filed within 7 days of lesson completion' }}</li>
                 <li>{{ $ar ? 'قدم سبب النزاع (20 حرفاً على الأقل) مع أي أدلة' : 'Provide the dispute reason (at least 20 characters) with any evidence' }}</li>
-                <li>{{ $ar ? 'سيتم خصم رسوم تحكيم قدرها 20% من قيمة الحصة' : 'An arbitration fee of 20% of the lesson value will be deducted' }}</li>
+                <li>{{ $ar ? 'سيتم خصم رسوم تحكيم قدرها 20% من قيمة الحصة من مقدم النزاع' : 'An arbitration fee of 20% of the lesson value will be deducted from the filer' }}</li>
+                <li>{{ $ar ? 'عند تقديم النزاع، يتم تجميد قيمة الحصة في حساب المعلم لحين البت' : 'When a dispute is filed, the lesson amount is frozen in the tutor\'s balance until resolution' }}</li>
             </ol>
 
             <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'المراجعة والقرار' : 'Review & Decision' }}</h3>
@@ -104,9 +98,9 @@
 
             <h3 style="font-weight: 700; color: #14532D; margin: 0;">{{ $ar ? 'النتائج المحتملة' : 'Possible Outcomes' }}</h3>
             <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-                <li>{{ $ar ? 'الحكم لصالح الطالب: يسترد الطالب المبلغ كاملاً، ويدفع المعلم رسوم التحكيم' : 'In favor of the student: Full refund to student, tutor pays arbitration fee' }}</li>
-                <li>{{ $ar ? 'الحكم لصالح المعلم: يحصل المعلم على المبلغ كاملاً، ويدفع الطالب رسوم التحكيم' : 'In favor of the tutor: Full payment to tutor, student pays arbitration fee' }}</li>
-                <li>{{ $ar ? 'المسؤولية المشتركة: تقسيم المبلغ بعد خصم رسوم التحكيم' : 'Shared responsibility: Amount split after deducting arbitration fee' }}</li>
+                <li>{{ $ar ? 'الحكم لصالح الطالب: يسترد الطالب العملات، ويتم خصم المبلغ من رصيد المعلم' : 'In favor of the student: Student gets full coin refund, amount deducted from tutor balance' }}</li>
+                <li>{{ $ar ? 'الحكم لصالح المعلم: يُطلق المبلغ المجمد للمعلم، ويدفع الطالب رسوم التحكيم' : 'In favor of the tutor: Frozen amount released to tutor, student pays arbitration fee' }}</li>
+                <li>{{ $ar ? 'رفض الدعوى: يُطلق المبلغ للمعلم مع احتفاظه برسوم التحكيم' : 'Claim rejected: Amount released to tutor, arbitration fee retained' }}</li>
             </ul>
 
             <p style="font-size: 14px; color: #9CA3AF; margin-top: 8px;">

@@ -61,7 +61,7 @@
                             {{ app()->getLocale() == 'ar' ? 'تذكرني' : 'Remember Me' }}
                         </span>
                     </label>
-                    <a href="#" class="text-sm font-medium text-secondary hover:text-amber-700 transition">
+                    <a href="{{ route('password.request') }}" class="text-sm font-medium text-secondary hover:text-amber-700 transition">
                         {{ app()->getLocale() == 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot Password?' }}
                     </a>
                 </div>

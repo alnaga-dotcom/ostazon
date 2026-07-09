@@ -44,14 +44,33 @@ class TutorDirectoryController extends Controller
             ->with(['tutorProfile', 'tutorProfile.subjects']);
 
         if ($request->subject) {
+            $term = trim($request->subject);
+            if ($term !== '') {
+                $matchingIds = Subject::where('name', 'like', "%{$term}%")
+                    ->orWhere('name_ar', 'like', "%{$term}%")
+                    ->orWhereHas('searchTerms', fn($q) => $q->where('term', 'like', "%{$term}%"))
+                    ->pluck('id');
+                if ($matchingIds->isNotEmpty()) {
+                    $query->whereHas('tutorProfile.subjects', fn($q) => $q->whereIn('subjects.id', $matchingIds));
+                }
+            }
+        }
+
+        if ($request->level) {
             $query->whereHas('tutorProfile.subjects', function ($q) use ($request) {
-                $q->where('subjects.id', $request->subject);
+                $q->where('tutor_subjects.level_id', $request->level);
             });
         }
 
         if ($request->country) {
             $query->whereHas('tutorProfile', function ($q) use ($request) {
                 $q->where('country', $request->country);
+            });
+        }
+
+        if ($request->city) {
+            $query->whereHas('tutorProfile', function ($q) use ($request) {
+                $q->where('city', 'like', '%' . trim($request->city) . '%');
             });
         }
 
@@ -84,7 +103,35 @@ class TutorDirectoryController extends Controller
         }
 
         if ($request->search) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $term = trim($request->search);
+            if ($term !== '') {
+                $matchingSubjectIds = Subject::where(function ($q) use ($term) {
+                    $q->where('name', 'like', "%{$term}%")
+                      ->orWhere('name_ar', 'like', "%{$term}%")
+                      ->orWhereHas('searchTerms', function ($sq) use ($term) {
+                          $sq->where('term', 'like', "%{$term}%");
+                      });
+                })->pluck('id');
+
+                $query->where(function ($q) use ($term, $matchingSubjectIds) {
+                    $q->where('users.name', 'like', "%{$term}%");
+                    if ($matchingSubjectIds->isNotEmpty()) {
+                        $q->orWhereHas('tutorProfile.subjects', function ($sq) use ($matchingSubjectIds) {
+                            $sq->whereIn('subjects.id', $matchingSubjectIds);
+                        });
+                    }
+                    $q->orWhereHas('tutorProfile', function ($sq) use ($term) {
+                        $sq->where('bio', 'like', "%{$term}%")
+                           ->orWhere('country', 'like', "%{$term}%")
+                           ->orWhere('city', 'like', "%{$term}%");
+                    });
+                });
+
+                $query->orderByRaw(
+                    "CASE WHEN users.name LIKE ? THEN 0 ELSE 1 END",
+                    ["%{$term}%"]
+                );
+            }
         }
 
         // Sponsored tutors first
@@ -119,36 +166,21 @@ class TutorDirectoryController extends Controller
         };
 
         $tutors = $query->paginate(12);
-        $subjects = Subject::orderBy('name')->get();
+        $levels = \App\Models\Level::orderBy('display_order')->get();
 
-        // Fallback country list if DB has none
-        $dbCountries = TutorProfile::whereNotNull('country')->distinct()->pluck('country')->sort()->values();
-        if ($dbCountries->isEmpty()) {
-            $countries = collect([
-                __('messages.egypt'),
-                __('messages.saudi_arabia'),
-                __('messages.uae'),
-                __('messages.kuwait'),
-                __('messages.qatar'),
-                __('messages.oman'),
-                __('messages.bahrain'),
-                __('messages.jordan'),
-                __('messages.lebanon'),
-                __('messages.iraq'),
-                __('messages.syria'),
-                __('messages.palestine'),
-                __('messages.morocco'),
-                __('messages.algeria'),
-                __('messages.tunisia'),
-                __('messages.libya'),
-                __('messages.sudan'),
-                __('messages.yemen'),
-            ]);
-        } else {
-            $countries = $dbCountries;
+        $suggestedSubjects = collect();
+        if ($tutors->isEmpty() && $request->subject) {
+            $term = trim($request->subject);
+            if ($term !== '') {
+                $suggestedSubjects = Subject::where('name', 'like', "%{$term}%")
+                    ->orWhere('name_ar', 'like', "%{$term}%")
+                    ->orWhereHas('searchTerms', fn($q) => $q->where('term', 'like', "%{$term}%"))
+                    ->take(10)
+                    ->get();
+            }
         }
 
-        return view('tutor.index', compact('tutors', 'subjects', 'countries'));
+        return view('tutor.index', compact('tutors', 'levels', 'suggestedSubjects'));
     }
 
     public function show($id)
@@ -160,6 +192,23 @@ class TutorDirectoryController extends Controller
             })
             ->with(['tutorProfile', 'tutorProfile.subjects'])
             ->findOrFail($id);
+
+        // Load subject-level groupings for display
+        $subjectLevels = \Illuminate\Support\Facades\DB::table('tutor_subjects')
+            ->where('tutor_profile_id', $tutor->tutorProfile->id)
+            ->whereNotNull('level_id')
+            ->join('levels', 'tutor_subjects.level_id', '=', 'levels.id')
+            ->join('subjects', 'tutor_subjects.subject_id', '=', 'subjects.id')
+            ->select('subjects.name as subject_name', 'subjects.name_ar as subject_name_ar', 'levels.name as level_name', 'levels.name_ar as level_name_ar')
+            ->get()
+            ->groupBy(function ($item) {
+                $locale = app()->getLocale();
+                return $locale == 'ar' && $item->subject_name_ar ? $item->subject_name_ar : $item->subject_name;
+            })
+            ->map(function ($items) {
+                $locale = app()->getLocale();
+                return $items->pluck($locale == 'ar' ? 'level_name_ar' : 'level_name');
+            });
 
         $reviews = $tutor->reviewsAsTutor()->with('student')->orderBy('created_at', 'desc')->take(10)->get();
 
@@ -176,6 +225,6 @@ class TutorDirectoryController extends Controller
             ->take(4)
             ->get();
 
-        return view('tutor.show', compact('tutor', 'reviews', 'similarTutors'));
+        return view('tutor.show', compact('tutor', 'reviews', 'similarTutors', 'subjectLevels'));
     }
 }

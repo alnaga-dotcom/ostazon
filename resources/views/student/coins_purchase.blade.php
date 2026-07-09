@@ -1,3 +1,6 @@
+@php
+    $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
+@endphp
 @extends('layouts.main')
 @section('title', __('messages.buy_coins') . ' - OstazON')
 @section('content')
@@ -12,8 +15,11 @@
     .bank-info { background: var(--primary-light); border-radius: 12px; padding: 16px; margin-bottom: 20px; font-size: 14px; line-height: 1.8; }
     .bank-info strong { color: var(--primary); }
     .form-hint { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+    .back-link { display: inline-block; margin-bottom: 16px; color: #16A34A; font-size: 14px; font-weight: 600; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
 </style>
 <div class="purchase-container">
+    <a href="{{ url('/student/dashboard') }}" class="back-link">← {{ app()->getLocale() == 'ar' ? 'العودة للوحة التحكم' : 'Back to Dashboard' }}</a>
     <div class="purchase-card">
         <h1>{{ app()->getLocale() == 'ar' ? 'شراء عملات' : 'Buy Coins' }}</h1>
 
@@ -27,9 +33,10 @@
         <!-- Bank/Wallet details for transfer -->
         <div class="bank-info">
             <strong>{{ app()->getLocale() == 'ar' ? '📌 يرجى تحويل المبلغ إلى أحد الحسابات التالية ثم إرسال الإثبات:' : '📌 Please transfer to one of the following accounts and submit proof:' }}</strong><br>
-            <strong>Vodafone Cash:</strong> 0100 000 0000<br>
-            <strong>InstaPay:</strong> ostazon@instapay.com<br>
-            <strong>{{ app()->getLocale() == 'ar' ? 'البنك الأهلي المصري:' : 'National Bank of Egypt:' }}</strong> 123-456-789-0123456<br>
+            <strong>Vodafone Cash:</strong> {{ $settings['vodafone_cash'] ?? '0100 000 0000' }}<br>
+            <strong>InstaPay:</strong> {{ $settings['instapay'] ?? 'ostazon@instapay.com' }}<br>
+            <strong>{{ $settings['bank_name'] ?? 'National Bank of Egypt' }}:</strong> {{ $settings['bank_account'] ?? '123-456-789-0123456' }}<br>
+            <strong>PayPal:</strong> {{ $settings['paypal_email'] ?? 'paypal@ostazon.com' }}<br>
             <small style="color:#DC2626;">{{ app()->getLocale() == 'ar' ? '* العملات ستُضاف إلى حسابك بعد التحقق من الدفع من قبل الإدارة' : '* Coins will be credited after admin verifies your payment' }}</small>
         </div>
 
@@ -52,6 +59,7 @@
                     <option value="vodafone_cash" @selected(old('payment_method') == 'vodafone_cash')>Vodafone Cash</option>
                     <option value="instapay" @selected(old('payment_method') == 'instapay')>InstaPay</option>
                     <option value="bank_transfer" @selected(old('payment_method') == 'bank_transfer')>{{ app()->getLocale() == 'ar' ? 'تحويل بنكي' : 'Bank Transfer' }}</option>
+                    <option value="paypal" @selected(old('payment_method') == 'paypal')>PayPal</option>
                 </select>
                 @error('payment_method') <div class="form-hint" style="color:#DC2626;">{{ $message }}</div> @enderror
             </div>

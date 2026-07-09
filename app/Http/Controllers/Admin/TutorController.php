@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TutorProfile;
 use App\Models\User;
+use App\Notifications\TutorVerified;
 use App\Services\BadgeService;
 use Illuminate\Http\Request;
 
@@ -45,6 +46,9 @@ class TutorController extends Controller
 
         // Auto-assign badge based on verification level
         BadgeService::updateBadge($tutorProfile);
+
+        // Notify tutor
+        $tutorProfile->user->notify(new TutorVerified($request->level));
 
         return back()->with('success', 'Tutor verified as ' . $request->level);
     }

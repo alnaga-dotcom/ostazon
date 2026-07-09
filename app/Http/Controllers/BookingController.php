@@ -123,11 +123,16 @@ class BookingController extends Controller
         // Deduct arbitration fee from user coins
         CoinService::debit($user->id, (int) ceil($fee), 'arbitration_fee', 'Arbitration fee for booking #' . $booking->id, 'booking', $booking->id);
 
+        // Freeze tutor's earnings until dispute is resolved
+        $booking->tutor->tutorProfile->decrement('available_balance', (int) $booking->tutor_earnings);
+
         $booking->update([
             'arbitration_fee_paid' => true,
             'arbitration_fee_amount' => $fee,
             'claimant_type' => Auth::id() === $booking->student_id ? 'student' : 'tutor',
             'disputed_at' => now(),
+            'frozen_until' => now()->addDays(7),
+            'payment_status' => 'disputed',
             'dispute_reason' => $request->reason,
             'arbitration_evidence' => $request->evidence,
             'arbitration_status' => 'pending',

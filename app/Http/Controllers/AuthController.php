@@ -9,6 +9,7 @@ use App\Services\CoinService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -27,6 +28,8 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:student,tutor',
             'referral_code' => 'nullable|string|exists:users,referral_code',
+            'country' => 'nullable|string|max:100',
+            'city' => 'nullable|string|max:100',
         ]);
 
         $user = User::create([
@@ -39,14 +42,17 @@ class AuthController extends Controller
             'referred_by' => $request->referral_code ? User::where('referral_code', $request->referral_code)->first()->id : null,
         ]);
 
-        // Create profile based on role
         if ($request->role === 'student') {
             StudentProfile::create(['user_id' => $user->id]);
+            CoinService::credit($user->id, 40, 'welcome', 'Welcome bonus 40 coins', 'welcome', $user->id);
         } else {
-            TutorProfile::create(['user_id' => $user->id]);
+            TutorProfile::create([
+                'user_id' => $user->id,
+                'country' => $request->country,
+                'city' => $request->city,
+            ]);
         }
 
-        // Process referral bonus
         if ($request->referral_code) {
             $referrer = User::where('referral_code', $request->referral_code)->first();
             if ($referrer) {
@@ -99,5 +105,46 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('home');
+    }
+
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email|exists:users,email']);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('success', __($status))
+            : back()->with('error', __($status));
+    }
+
+    public function showResetForm($token)
+    {
+        return view('auth.reset-password', ['token' => $token]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill(['password' => Hash::make($password)])->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('success', __($status))
+            : back()->with('error', __($status));
     }
 }

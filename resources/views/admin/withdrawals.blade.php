@@ -27,7 +27,7 @@
                     @foreach($withdrawals as $wd)
                         <tr>
                             <td>{{ $wd->tutor->name ?? 'N/A' }}</td>
-                            <td>{{ $wd->amount }} EGP</td>
+                            <td>{{ number_format($wd->amount, 0) }} EGP</td>
                             <td>{{ $wd->payment_method ?? 'N/A' }}</td>
                             <td>{{ $wd->payment_details ?? 'N/A' }}</td>
                             <td>{{ $wd->created_at->format('M d, Y') }}</td>

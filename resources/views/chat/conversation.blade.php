@@ -8,6 +8,10 @@
         ← {{ app()->getLocale() == 'ar' ? 'العودة للرسائل' : 'Back to Messages' }}
     </a>
 
+    @if(session('error'))
+        <div style="background:#F8D7DA;color:#721C24;padding:12px 16px;border-radius:12px;margin-bottom:16px;">{{ session('error') }}</div>
+    @endif
+
     <div style="background: white; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden;">
         <div style="padding: 20px 24px; border-bottom: 2px solid #F3F4F6; display: flex; align-items: center; gap: 12px;">
             <div style="width: 40px; height: 40px; border-radius: 50%; background: #166534; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">
@@ -40,21 +44,60 @@
             @endforelse
         </div>
 
-        <form method="POST" action="{{ route('chat.send', $user->id) }}" style="padding: 16px 24px; border-top: 2px solid #F3F4F6; display: flex; gap: 12px;">
+        <form method="POST" action="{{ route('chat.send', $user->id) }}" style="padding: 16px 24px; border-top: 2px solid #F3F4F6; display: flex; gap: 12px;" id="chat-form">
             @csrf
             <input type="text" name="body" required
                    placeholder="{{ app()->getLocale() == 'ar' ? 'اكتب رسالتك...' : 'Type your message...' }}"
                    style="flex: 1; padding: 12px 16px; border: 2px solid #E5E7EB; border-radius: 12px; font-size: 14px; outline: none;"
-                   autofocus>
-            <button type="submit" style="padding: 12px 24px; background: #D97706; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;">
+                   autofocus id="message-input">
+            <button type="submit" id="send-btn" style="padding: 12px 24px; background: #D97706; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;">
                 {{ app()->getLocale() == 'ar' ? 'إرسال' : 'Send' }}
             </button>
         </form>
+        <div id="contact-warning" style="display:none; padding: 8px 24px 16px; color: #DC2626; font-size: 13px; font-weight: 500;"></div>
     </div>
 </div>
 
 <script>
     var container = document.getElementById('messages-container');
     if (container) container.scrollTop = container.scrollHeight;
+
+    // Block contact info in chat
+    (function() {
+        var form = document.getElementById('chat-form');
+        var input = document.getElementById('message-input');
+        var warning = document.getElementById('contact-warning');
+        var btn = document.getElementById('send-btn');
+        var msg = '{{ app()->getLocale() == 'ar' ? 'لا يمكن إرسال أرقام هواتف أو بريد إلكتروني في الرسائل' : 'Phone numbers and emails are not allowed in messages' }}';
+
+        if (!form) return;
+
+        function hasContactInfo(text) {
+            var phone = /(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/;
+            var email = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+            return phone.test(text) || email.test(text);
+        }
+
+        input.addEventListener('input', function() {
+            if (hasContactInfo(this.value)) {
+                warning.style.display = 'block';
+                warning.textContent = msg;
+                btn.style.opacity = '0.5';
+                btn.style.pointerEvents = 'none';
+            } else {
+                warning.style.display = 'none';
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }
+        });
+
+        form.addEventListener('submit', function(e) {
+            if (hasContactInfo(input.value)) {
+                e.preventDefault();
+                warning.style.display = 'block';
+                warning.textContent = msg;
+            }
+        });
+    })();
 </script>
 @endsection

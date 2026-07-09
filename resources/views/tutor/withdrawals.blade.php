@@ -14,13 +14,16 @@
     <div class="wd-card">
         <h2>{{ app()->getLocale() == 'ar' ? 'طلب سحب' : 'Withdrawal Request' }}</h2>
         <div class="balance-display">
-            {{ app()->getLocale() == 'ar' ? 'الرصيد المتاح:' : 'Available Balance:' }} {{ auth()->user()->tutorProfile->available_balance ?? 0 }} EGP
+            {{ app()->getLocale() == 'ar' ? 'الرصيد المتاح:' : 'Available Balance:' }} {{ number_format(auth()->user()->tutorProfile->available_balance ?? 0, 0) }} EGP
         </div>
         <form method="POST" action="{{ route('tutor.withdrawals.store') }}">
             @csrf
             <div class="form-group">
                 <label>{{ app()->getLocale() == 'ar' ? 'المبلغ' : 'Amount' }}</label>
-                <input type="number" name="amount" min="1" max="{{ auth()->user()->tutorProfile->available_balance ?? 0 }}" required>
+                <input type="number" name="amount" min="500" max="{{ auth()->user()->tutorProfile->available_balance ?? 0 }}" required>
+                <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">
+                    {{ app()->getLocale() == 'ar' ? 'الحد الأدنى للسحب هو 500 جنيه' : 'Minimum withdrawal is 500 EGP' }}
+                </div>
             </div>
             <div class="form-group">
                 <label>{{ app()->getLocale() == 'ar' ? 'طريقة الدفع' : 'Payment Method' }}</label>

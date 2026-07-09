@@ -183,4 +183,6 @@ return [
     'request_not_open' => 'This request is no longer accepting proposals',
     'insufficient_coins_request' => 'You need at least 10 coins to post a request. Purchase coins from your dashboard.',
     'purchase_submitted' => 'Purchase request submitted! We will verify your payment and credit the coins shortly.',
+    'chat_no_contact' => 'Messages cannot contain phone numbers or email addresses. Use the "Reveal Contact" button for 10 coins.',
+    'withdrawal_min' => 'Minimum withdrawal amount is 500 EGP.',
 ];

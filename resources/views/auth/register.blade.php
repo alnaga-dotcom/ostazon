@@ -71,33 +71,43 @@
                     <select name="country" id="country" 
                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition bg-white">
                         <option value="">{{ app()->getLocale() == 'ar' ? 'اختر الدولة' : 'Select Country' }}</option>
-                        <option value="egypt">{{ app()->getLocale() == 'ar' ? 'مصر' : 'Egypt' }}</option>
-                        <option value="saudi_arabia">{{ app()->getLocale() == 'ar' ? 'السعودية' : 'Saudi Arabia' }}</option>
-                        <option value="uae">{{ app()->getLocale() == 'ar' ? 'الإمارات' : 'UAE' }}</option>
-                        <option value="kuwait">{{ app()->getLocale() == 'ar' ? 'الكويت' : 'Kuwait' }}</option>
-                        <option value="qatar">{{ app()->getLocale() == 'ar' ? 'قطر' : 'Qatar' }}</option>
-                        <option value="bahrain">{{ app()->getLocale() == 'ar' ? 'البحرين' : 'Bahrain' }}</option>
-                        <option value="oman">{{ app()->getLocale() == 'ar' ? 'عمان' : 'Oman' }}</option>
-                        <option value="jordan">{{ app()->getLocale() == 'ar' ? 'الأردن' : 'Jordan' }}</option>
-                        <option value="lebanon">{{ app()->getLocale() == 'ar' ? 'لبنان' : 'Lebanon' }}</option>
-                        <option value="iraq">{{ app()->getLocale() == 'ar' ? 'العراق' : 'Iraq' }}</option>
-                        <option value="morocco">{{ app()->getLocale() == 'ar' ? 'المغرب' : 'Morocco' }}</option>
-                        <option value="tunisia">{{ app()->getLocale() == 'ar' ? 'تونس' : 'Tunisia' }}</option>
-                        <option value="algeria">{{ app()->getLocale() == 'ar' ? 'الجزائر' : 'Algeria' }}</option>
-                        <option value="libya">{{ app()->getLocale() == 'ar' ? 'ليبيا' : 'Libya' }}</option>
-                        <option value="sudan">{{ app()->getLocale() == 'ar' ? 'السودان' : 'Sudan' }}</option>
-                        <option value="yemen">{{ app()->getLocale() == 'ar' ? 'اليمن' : 'Yemen' }}</option>
-                        <option value="palestine">{{ app()->getLocale() == 'ar' ? 'فلسطين' : 'Palestine' }}</option>
-                        <option value="syria">{{ app()->getLocale() == 'ar' ? 'سوريا' : 'Syria' }}</option>
-                        <option value="india">{{ app()->getLocale() == 'ar' ? 'الهند' : 'India' }}</option>
-                        <option value="pakistan">{{ app()->getLocale() == 'ar' ? 'باكستان' : 'Pakistan' }}</option>
-                        <option value="bangladesh">{{ app()->getLocale() == 'ar' ? 'بنغلاديش' : 'Bangladesh' }}</option>
-                        <option value="uk">{{ app()->getLocale() == 'ar' ? 'المملكة المتحدة' : 'United Kingdom' }}</option>
-                        <option value="usa">{{ app()->getLocale() == 'ar' ? 'الولايات المتحدة' : 'United States' }}</option>
-                        <option value="canada">{{ app()->getLocale() == 'ar' ? 'كندا' : 'Canada' }}</option>
-                        <option value="australia">{{ app()->getLocale() == 'ar' ? 'أستراليا' : 'Australia' }}</option>
-                        <option value="other">{{ app()->getLocale() == 'ar' ? 'أخرى' : 'Other' }}</option>
+                        <option value="Egypt">{{ app()->getLocale() == 'ar' ? 'مصر' : 'Egypt' }}</option>
+                        <option value="Saudi Arabia">{{ app()->getLocale() == 'ar' ? 'السعودية' : 'Saudi Arabia' }}</option>
+                        <option value="UAE">{{ app()->getLocale() == 'ar' ? 'الإمارات' : 'UAE' }}</option>
+                        <option value="Kuwait">{{ app()->getLocale() == 'ar' ? 'الكويت' : 'Kuwait' }}</option>
+                        <option value="Qatar">{{ app()->getLocale() == 'ar' ? 'قطر' : 'Qatar' }}</option>
+                        <option value="Bahrain">{{ app()->getLocale() == 'ar' ? 'البحرين' : 'Bahrain' }}</option>
+                        <option value="Oman">{{ app()->getLocale() == 'ar' ? 'عمان' : 'Oman' }}</option>
+                        <option value="Jordan">{{ app()->getLocale() == 'ar' ? 'الأردن' : 'Jordan' }}</option>
+                        <option value="Lebanon">{{ app()->getLocale() == 'ar' ? 'لبنان' : 'Lebanon' }}</option>
+                        <option value="Iraq">{{ app()->getLocale() == 'ar' ? 'العراق' : 'Iraq' }}</option>
+                        <option value="Morocco">{{ app()->getLocale() == 'ar' ? 'المغرب' : 'Morocco' }}</option>
+                        <option value="Tunisia">{{ app()->getLocale() == 'ar' ? 'تونس' : 'Tunisia' }}</option>
+                        <option value="Algeria">{{ app()->getLocale() == 'ar' ? 'الجزائر' : 'Algeria' }}</option>
+                        <option value="Libya">{{ app()->getLocale() == 'ar' ? 'ليبيا' : 'Libya' }}</option>
+                        <option value="Sudan">{{ app()->getLocale() == 'ar' ? 'السودان' : 'Sudan' }}</option>
+                        <option value="Yemen">{{ app()->getLocale() == 'ar' ? 'اليمن' : 'Yemen' }}</option>
+                        <option value="Palestine">{{ app()->getLocale() == 'ar' ? 'فلسطين' : 'Palestine' }}</option>
+                        <option value="Syria">{{ app()->getLocale() == 'ar' ? 'سوريا' : 'Syria' }}</option>
+                        <option value="India">{{ app()->getLocale() == 'ar' ? 'الهند' : 'India' }}</option>
+                        <option value="Pakistan">{{ app()->getLocale() == 'ar' ? 'باكستان' : 'Pakistan' }}</option>
+                        <option value="Bangladesh">{{ app()->getLocale() == 'ar' ? 'بنغلاديش' : 'Bangladesh' }}</option>
+                        <option value="United Kingdom">{{ app()->getLocale() == 'ar' ? 'المملكة المتحدة' : 'United Kingdom' }}</option>
+                        <option value="United States">{{ app()->getLocale() == 'ar' ? 'الولايات المتحدة' : 'United States' }}</option>
+                        <option value="Canada">{{ app()->getLocale() == 'ar' ? 'كندا' : 'Canada' }}</option>
+                        <option value="Australia">{{ app()->getLocale() == 'ar' ? 'أستراليا' : 'Australia' }}</option>
+                        <option value="Other">{{ app()->getLocale() == 'ar' ? 'أخرى' : 'Other' }}</option>
                     </select>
+                </div>
+
+                <!-- City -->
+                <div>
+                    <label for="city" class="block text-sm font-medium text-text-dark mb-2">
+                        {{ app()->getLocale() == 'ar' ? 'المدينة' : 'City' }}
+                    </label>
+                    <input type="text" name="city" id="city"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition"
+                        placeholder="{{ app()->getLocale() == 'ar' ? 'مثال: القاهرة' : 'e.g. Cairo' }}" value="{{ old('city') }}">
                 </div>
 
                 <!-- Role Selection -->

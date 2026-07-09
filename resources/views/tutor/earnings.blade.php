@@ -19,11 +19,11 @@
     <div class="stats-grid">
         <div class="stat-card">
             <h3>{{ app()->getLocale() == 'ar' ? 'الرصيد المتاح' : 'Available Balance' }}</h3>
-            <div class="value">{{ auth()->user()->tutorProfile->available_balance ?? 0 }} EGP</div>
+            <div class="value">{{ number_format(auth()->user()->tutorProfile->available_balance ?? 0, 0) }} EGP</div>
         </div>
         <div class="stat-card">
             <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الأرباح' : 'Total Earnings' }}</h3>
-            <div class="value">{{ auth()->user()->tutorProfile->total_earnings ?? 0 }} EGP</div>
+            <div class="value">{{ number_format(auth()->user()->tutorProfile->total_earnings ?? 0, 0) }} EGP</div>
         </div>
         <div class="stat-card">
             <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الحصص' : 'Total Lessons' }}</h3>

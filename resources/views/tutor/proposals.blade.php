@@ -54,7 +54,7 @@
                 <form method="POST" action="{{ route('tutor.proposals.store') }}" class="propose-form">
                     @csrf
                     <input type="hidden" name="request_id" value="{{ $request->id }}">
-                    <input type="number" name="proposed_rate" step="0.01" min="0" placeholder="{{ app()->getLocale() == 'ar' ? 'السعر (جنيه)' : 'Rate (EGP)' }}" required>
+                    <input type="number" name="proposed_rate" step="1" min="0" placeholder="{{ app()->getLocale() == 'ar' ? 'السعر (جنيه)' : 'Rate (EGP)' }}" required>
                     <div style="display: flex; gap: 8px;">
                         <input type="text" name="message" placeholder="{{ app()->getLocale() == 'ar' ? 'رسالتك للطالب...' : 'Your message to the student...' }}" required style="flex:1;">
                         <button type="submit" class="btn btn-primary">{{ app()->getLocale() == 'ar' ? 'تقديم عرض' : 'Submit' }}</button>

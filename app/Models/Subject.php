@@ -11,6 +11,7 @@ class Subject extends Model
 
     protected $fillable = [
         'name',
+        'name_ar',
         'category',
         'icon',
         'is_active',
@@ -23,27 +24,15 @@ class Subject extends Model
             ->withTimestamps();
     }
 
+    public function searchTerms()
+    {
+        return $this->hasMany(\App\Models\SubjectSearchTerm::class);
+    }
+
     public function getLocalizedNameAttribute()
     {
-        $map = [
-            'Mathematics' => 'math',
-            'Physics' => 'physics',
-            'Chemistry' => 'chemistry',
-            'Biology' => 'biology',
-            'English' => 'english',
-            'Arabic' => 'arabic_lang',
-            'Programming' => 'programming',
-            'History' => 'history',
-            'Geography' => 'geography',
-            'Economics' => 'economics',
-            'French' => 'french',
-            'Science' => 'science',
-        ];
-
-        $key = isset($map[$this->name]) ? 'messages.' . $map[$this->name] : 'messages.' . strtolower($this->name);
-        $trans = __($key);
-        if ($trans !== $key) {
-            return $trans;
+        if (app()->getLocale() == 'ar' && $this->name_ar) {
+            return $this->name_ar;
         }
         return $this->name;
     }

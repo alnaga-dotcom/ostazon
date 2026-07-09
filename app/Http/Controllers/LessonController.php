@@ -40,44 +40,36 @@ class LessonController extends Controller
             'scheduled_at' => 'required|date|after:now',
             'duration_minutes' => 'required|integer|min:30|max:240',
             'lesson_fee' => 'required|numeric|min:0',
-            'platform_guarantee' => 'required|in:yes,no',
             'student_notes' => 'nullable|string|max:500',
         ]);
 
         $student = Auth::user();
         $tutor = \App\Models\User::findOrFail($request->tutor_id);
 
-        // Verify tutor exists and is verified
         if (!$tutor->isTutor() || $tutor->tutorProfile->verification_status === 'pending') {
             return back()->with('error', 'Invalid tutor selected.');
         }
 
-        // FIX: Proper boolean casting from string 'yes'/'no' to boolean true/false
-        $platformGuarantee = $request->platform_guarantee === 'yes';
-
-        $platformFee = $request->lesson_fee * 0.05; // 5% platform fee
+        $platformFeePercent = (float) (\App\Models\Setting::getValue('platform_fee_percent') ?? 5);
+        $platformFee = $request->lesson_fee * ($platformFeePercent / 100);
         $tutorEarnings = $request->lesson_fee - $platformFee;
+        $bookingCost = (int) ceil($request->lesson_fee);
 
-        // If platform guarantee is enabled, verify student has enough coins and deduct
-        if ($platformGuarantee) {
-            $bookingCost = (int) ceil($request->lesson_fee); // 1 coin = 1 EGP for booking
+        if (!CoinService::hasSufficient($student->id, $bookingCost)) {
+            return back()->with('error', 'Insufficient coins! You need ' . $bookingCost . ' coins to book this lesson. Please purchase more coins.');
+        }
 
-            if (!CoinService::hasSufficient($student->id, $bookingCost)) {
-                return back()->with('error', 'Insufficient coins! You need ' . $bookingCost . ' coins to book this lesson with platform guarantee. Please purchase more coins.');
-            }
+        $deducted = CoinService::debit(
+            $student->id,
+            $bookingCost,
+            'spend',
+            'Lesson booking with ' . $tutor->name . ' for ' . $request->lesson_fee . ' EGP',
+            'booking',
+            null
+        );
 
-            $deducted = CoinService::debit(
-                $student->id,
-                $bookingCost,
-                'spend',
-                'Lesson booking with ' . $tutor->name . ' for ' . $request->lesson_fee . ' EGP',
-                'booking',
-                null
-            );
-
-            if (!$deducted) {
-                return back()->with('error', 'Payment processing failed. Please try again.');
-            }
+        if (!$deducted) {
+            return back()->with('error', 'Payment processing failed. Please try again.');
         }
 
         $booking = Booking::create([
@@ -91,20 +83,14 @@ class LessonController extends Controller
             'lesson_fee' => $request->lesson_fee,
             'platform_fee' => $platformFee,
             'tutor_earnings' => $tutorEarnings,
-            'payment_status' => $platformGuarantee ? 'paid' : 'off_platform',
+            'payment_status' => 'paid',
             'lesson_status' => 'scheduled',
-            'platform_guarantee' => $platformGuarantee,
+            'platform_guarantee' => true,
             'student_notes' => $request->student_notes,
-            'dispute_until' => $platformGuarantee 
-                ? now()->parse($request->scheduled_at)->addHours(48) 
-                : null,
+            'dispute_until' => now()->parse($request->scheduled_at)->addHours(48),
         ]);
 
-        if ($platformGuarantee) {
-            return redirect()->route('student.bookings')->with('success', 'Booking created and paid! Your lesson is secured with our platform guarantee.');
-        } else {
-            return redirect()->route('student.bookings')->with('success', 'Booking created! You and the tutor will arrange payment directly. No platform guarantee applies.');
-        }
+        return redirect()->route('student.bookings')->with('success', 'Booking created and paid! Your lesson is secured with our platform guarantee.');
     }
 
     public function confirm(Request $request, $id)
@@ -124,27 +110,23 @@ class LessonController extends Controller
     {
         $booking = Booking::findOrFail($id);
 
-        // Either student or tutor can mark as complete
         if ($booking->tutor_id !== Auth::id() && $booking->student_id !== Auth::id()) {
             return back()->with('error', 'Unauthorized.');
         }
 
-        // FIX: Set completed_at timestamp and proper payment status flow
         $updateData = [
             'lesson_status' => 'completed',
             'completed_at' => now(),
-            'frozen_until' => now()->addDays(7),
+            'payment_status' => 'released',
         ];
-
-        if ($booking->platform_guarantee) {
-            $updateData['payment_status'] = 'escrow';
-        } else {
-            $updateData['payment_status'] = 'off_platform';
-        }
 
         $booking->update($updateData);
 
-        return back()->with('success', 'Lesson marked as completed! Funds are frozen for 7 days for the arbitration window.');
+        $tutor = $booking->tutor;
+        $tutor->tutorProfile->increment('total_earnings', $booking->tutor_earnings);
+        $tutor->tutorProfile->increment('available_balance', $booking->tutor_earnings);
+
+        return back()->with('success', 'Lesson completed! Earnings added to your balance.');
     }
 
     public function cancel(Request $request, $id)

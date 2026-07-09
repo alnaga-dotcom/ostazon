@@ -52,7 +52,7 @@
         </div>
         <div class="stat-card">
             <h3>{{ app()->getLocale() == 'ar' ? 'إجمالي الإنفاق' : 'Total Spent' }}</h3>
-            <div class="value">{{ auth()->user()->studentProfile->total_spent ?? 0 }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
+            <div class="value">{{ number_format(auth()->user()->studentProfile->total_spent ?? 0, 0) }} {{ app()->getLocale() == 'ar' ? 'جنيه' : 'EGP' }}</div>
         </div>
     </div>
 

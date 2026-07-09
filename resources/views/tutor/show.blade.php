@@ -1,6 +1,8 @@
 @extends('layouts.main')
 
 @section('title', $tutor->name . ' - Tutor Profile - OstazON')
+@section('meta_description', 'Book a private online lesson with ' . $tutor->name . ' on OstazON. ' . ($tutor->tutorProfile->bio ? Str::limit(strip_tags($tutor->tutorProfile->bio), 150) : 'Expert tutor available for online tutoring sessions.'))
+@section('og_type', 'profile')
 
 @section('content')
 <style>
@@ -37,6 +39,13 @@
                 <span>⭐ {{ number_format($tutor->reviews_as_tutor_avg_rating ?? 0, 1) }} ({{ $tutor->reviews_as_tutor_count ?? 0 }} reviews)</span>
                 <span>{{ $tutor->tutorProfile->total_lessons ?? 0 }} lessons</span>
                 <span>{{ ucfirst($tutor->tutorProfile->verification_status ?? 'Verified') }}</span>
+                @if($tutor->tutorProfile->city || $tutor->tutorProfile->country)
+                    <span>
+                        @if($tutor->tutorProfile->city){{ $tutor->tutorProfile->city }}@endif
+                        @if($tutor->tutorProfile->city && $tutor->tutorProfile->country), @endif
+                        @if($tutor->tutorProfile->country){{ $tutor->tutorProfile->country }}@endif
+                    </span>
+                @endif
             </div>
         </div>
     </div>
@@ -53,6 +62,16 @@
     </span>
 @endforeach
               </div>
+              @if(isset($subjectLevels) && $subjectLevels->isNotEmpty())
+              <div style="margin-top:12px;">
+                  @foreach($subjectLevels as $subjectName => $levels)
+                      <div style="font-size:13px;color:#6b7280;margin-bottom:4px;">
+                          <strong>{{ $subjectName }}:</strong>
+                          @foreach($levels as $sl)<span style="display:inline-block;background:#fef3c7;color:#d97706;padding:1px 8px;border-radius:4px;font-size:11px;font-weight:600;margin:2px;">{{ $sl }}</span>@endforeach
+                      </div>
+                  @endforeach
+              </div>
+              @endif
             </div>
 
             <div class="profile-section">
@@ -144,12 +163,6 @@
                        style="flex: 1; text-align: center; padding: 12px; background: #166534; color: white; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none;">
                         💬 {{ app()->getLocale() == 'ar' ? 'راسلني' : 'Message' }}
                     </a>
-                    @if(auth()->user()->isStudent())
-                        <button onclick="revealContact({{ $tutor->id }})"
-                                style="flex: 1; text-align: center; padding: 12px; background: #D97706; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;">
-                            👁 {{ app()->getLocale() == 'ar' ? 'عرض جهة الاتصال' : 'Reveal Contact' }}
-                        </button>
-                    @endif
                 @else
                     <a href="{{ route('login') }}"
                        style="flex: 1; text-align: center; padding: 12px; background: #166534; color: white; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none;">
@@ -158,18 +171,10 @@
                 @endauth
             </div>
 
-            <div id="contact-info" style="display: none; background: #ECFDF0; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 2px solid #A7F3D0;">
-                <h4 style="font-size: 14px; font-weight: 700; color: #166534; margin-bottom: 8px;">
-                    {{ app()->getLocale() == 'ar' ? 'معلومات الاتصال' : 'Contact Info' }}
-                </h4>
-                <p style="font-size: 14px; color: #14532D; margin: 4px 0;">📧 <span id="revealed-email"></span></p>
-                <p style="font-size: 14px; color: #14532D; margin: 4px 0;">📱 <span id="revealed-phone"></span></p>
-            </div>
-
             <div class="booking-form">
                 <h2>Book a Lesson</h2>
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 32px; font-weight: 800; color: var(--primary);">{{ $tutor->tutorProfile->hourly_rate ?? 0 }} EGP</div>
+                    <div style="font-size: 32px; font-weight: 800; color: var(--primary);">{{ number_format($tutor->tutorProfile->hourly_rate ?? 0, 0) }} EGP</div>
                     <div style="color: var(--text-light); font-size: 14px;">per hour</div>
                 </div>
                 @auth
@@ -211,13 +216,6 @@
                                 <input type="number" name="lesson_fee" class="form-control" value="{{ $tutor->tutorProfile->hourly_rate ?? 0 }}" required>
                             </div>
                             <div class="form-group">
-                                <label>Platform Guarantee</label>
-                                <select name="platform_guarantee" class="form-control">
-                                    <option value="yes">Yes - Secure payment with dispute protection</option>
-                                    <option value="no">No - Pay tutor directly</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
                                 <label>Notes</label>
                                 <textarea name="student_notes" class="form-control" rows="3" placeholder="Any specific topics or requirements..."></textarea>
                             </div>
@@ -252,39 +250,5 @@
         </div>
     @endif
 </div>
-<script>
-    function revealContact(tutorId) {
-        var btn = event.target;
-        btn.disabled = true;
-        btn.textContent = '{{ app()->getLocale() == 'ar' ? 'جاري الكشف...' : 'Revealing...' }}';
 
-        fetch('{{ route("student.coins.reveal") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ tutor_id: tutorId })
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.success) {
-                document.getElementById('revealed-email').textContent = data.email;
-                document.getElementById('revealed-phone').textContent = data.phone;
-                document.getElementById('contact-info').style.display = 'block';
-                btn.textContent = '{{ app()->getLocale() == 'ar' ? 'تم الكشف' : 'Revealed' }} ✓';
-                btn.style.background = '#10B981';
-            } else {
-                alert(data.message || '{{ app()->getLocale() == 'ar' ? 'حدث خطأ' : 'An error occurred' }}');
-                btn.disabled = false;
-                btn.textContent = '👁 {{ app()->getLocale() == 'ar' ? 'عرض جهة الاتصال' : 'Reveal Contact' }}';
-            }
-        })
-        .catch(function() {
-            alert('{{ app()->getLocale() == 'ar' ? 'حدث خطأ في الاتصال' : 'Network error' }}');
-            btn.disabled = false;
-            btn.textContent = '👁 {{ app()->getLocale() == 'ar' ? 'عرض جهة الاتصال' : 'Reveal Contact' }}';
-        });
-    }
-</script>
 @endsection

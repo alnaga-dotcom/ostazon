@@ -45,7 +45,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>{{ app()->getLocale() == 'ar' ? 'الميزانية (جنيه)' : 'Budget (EGP)' }}</label>
-                    <input type="number" name="budget_egp" value="{{ old('budget_egp') }}" step="0.01" min="0" placeholder="{{ app()->getLocale() == 'ar' ? 'مثال: 200' : 'e.g. 200' }}">
+                    <input type="number" name="budget_egp" value="{{ old('budget_egp') }}" step="1" min="0" placeholder="{{ app()->getLocale() == 'ar' ? 'مثال: 200' : 'e.g. 200' }}">
                     @error('budget_egp') <div class="form-hint" style="color:#DC2626;">{{ $message }}</div> @enderror
                 </div>
                 <div class="form-group">

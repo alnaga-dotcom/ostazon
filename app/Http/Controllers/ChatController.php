@@ -65,13 +65,30 @@ class ChatController extends Controller
             'body' => 'required|string|max:2000',
         ]);
 
+        $body = $request->body;
+
+        if ($this->containsContactInfo($body)) {
+            return back()->with('error', __('messages.chat_no_contact'));
+        }
+
         Message::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $user->id,
-            'body' => $request->body,
+            'body' => $body,
         ]);
 
         return redirect()->route('chat.conversation', $user->id);
+    }
+
+    private function containsContactInfo(string $text): bool
+    {
+        // Phone numbers: Egyptian / international formats
+        $phonePattern = '/(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/';
+
+        // Email addresses
+        $emailPattern = '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/';
+
+        return preg_match($phonePattern, $text) || preg_match($emailPattern, $text);
     }
 
     public function unreadCount()

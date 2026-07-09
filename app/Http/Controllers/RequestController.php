@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TutoringRequest;
 use App\Models\TutorProposal;
+use App\Notifications\NewProposal;
 use App\Services\CoinService;
 
 class RequestController extends Controller
@@ -110,13 +111,16 @@ class RequestController extends Controller
             return back()->with('error', __('messages.already_proposed'));
         }
 
-        TutorProposal::create([
+        $proposal = TutorProposal::create([
             'request_id' => $data['request_id'],
             'tutor_id' => auth()->id(),
             'proposed_rate' => $data['proposed_rate'] ?? null,
             'message' => $data['message'],
             'status' => 'pending',
         ]);
+
+        // Notify the student
+        $tutoringRequest->student->notify(new NewProposal($proposal));
 
         return back()->with('success', __('messages.proposal_submitted'));
     }

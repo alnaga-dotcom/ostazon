@@ -57,7 +57,7 @@
 
                 <div class="payment-amount">
                     <div class="coins">{{ $payment->coins_requested }}</div>
-                    <div class="price">{{ $payment->amount_egp }} EGP</div>
+                    <div class="price">{{ number_format($payment->amount_egp, 0) }} EGP</div>
                 </div>
 
                 <div style="display: flex; gap: 16px; align-items: center;">
@@ -99,7 +99,7 @@
         @forelse($verifiedPayments as $payment)
             <div class="verified-card">
                 <div class="verified-info">
-                    <h4>{{ $payment->user->name }} - {{ $payment->coins_requested }} Coins ({{ $payment->amount_egp }} EGP)</h4>
+                    <h4>{{ $payment->user->name }} - {{ $payment->coins_requested }} Coins ({{ number_format($payment->amount_egp, 0) }} EGP)</h4>
                     <p>{{ ucfirst(str_replace('_', ' ', $payment->payment_method)) }} • Verified {{ $payment->verified_at->diffForHumans() }} by {{ $payment->verifier->name ?? 'Admin' }}</p>
                     @if($payment->admin_notes)
                         <p style="color: var(--text-light); margin-top: 4px;">Note: {{ $payment->admin_notes }}</p>

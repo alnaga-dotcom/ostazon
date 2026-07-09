@@ -113,7 +113,7 @@
                     </div>
                     <div class="document-box">
                         <h4>👤 Rate</h4>
-                        <span class="status status-present">{{ $tutor->hourly_rate }} EGP/hr</span>
+                        <span class="status status-present">{{ number_format($tutor->hourly_rate, 0) }} EGP/hr</span>
                     </div>
                 </div>
 

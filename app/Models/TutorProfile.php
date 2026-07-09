@@ -48,7 +48,14 @@ protected $fillable = [
     public function subjects()
     {
         return $this->belongsToMany(Subject::class, 'tutor_subjects')
-            ->withPivot('hourly_rate', 'is_primary')
+            ->withPivot('hourly_rate', 'is_primary', 'level_id')
+            ->withTimestamps();
+    }
+
+    public function levels()
+    {
+        return $this->belongsToMany(Level::class, 'tutor_subjects', 'tutor_profile_id', 'level_id')
+            ->withPivot('subject_id')
             ->withTimestamps();
     }
 }
